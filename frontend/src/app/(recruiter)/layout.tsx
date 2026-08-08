@@ -433,7 +433,7 @@ export default function RecruiterLayout({ children }: { children: React.ReactNod
     <AuthGuard allowedRoles={['recruiter']}>
       <div className="min-h-screen bg-gradient-to-br from-[#f7f7f7] via-[#f9fbf4] to-[#eef7d8]">
         <header
-          className={`fixed inset-x-0 top-0 z-40 px-4 sm:px-6 lg:px-10 py-4 bg-[#f7f7f7]/90 backdrop-blur-sm transition-transform duration-300 ${
+          className={`fixed inset-x-0 top-0 z-40 px-4 sm:px-6 lg:pl-[14rem] xl:pl-[15rem] lg:pr-10 py-4 bg-[#f7f7f7]/90 backdrop-blur-sm transition-transform duration-300 ${
             isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
           }`}
         >
