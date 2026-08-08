@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Myanmar Sans Pro";
+  src: url("/fonts/Myanmar Sans Pro Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Myanmar Khyay";
+  src: url("/fonts/MyanmarKhyay.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Myanmar Khyay", "Myanmar Sans Pro", sans-serif;
+
+  /* Brand Colors */
+  --color-brand-primary: #c3ff3d;
+  --color-brand-coral: #ff6b6b;
+  --color-brand-dark: #0b1120;
+  --color-brand-light: #f4f7ff;
+  --color-brand-blue: #2563eb;
+  --color-brand-deep: #1e3a8a;
+
+  /* Animations */
+  --animate-blob: blob 7s infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 6s ease-in-out 3s infinite;
+  --animate-marquee: marquee 30s linear infinite;
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+:root {
+  --background: #fcfcfc;
+  --foreground: #1e293b;
+  --font-display: "Myanmar Khyay";
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #fcfcfc;
+  overflow-x: hidden;
+  font-family: "Myanmar Khyay", "Myanmar Sans Pro", sans-serif;
+}
+
+body * {
+  font-family: "Myanmar Khyay", "Myanmar Sans Pro", sans-serif;
+}
+
+.font-display,
+.font-brand {
+  font-family: "Myanmar Khyay", "Myanmar Sans Pro", sans-serif;
+}
+
+.font-navbar {
+  font-family: "Myanmar Sans Pro", sans-serif;
+}
+
+.font-navbar * {
+  font-family: "Myanmar Sans Pro", sans-serif;
+}
+
+::selection {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+/* Glassmorphism */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+}
+
+/* Job Card Hover */
+.job-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.job-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow:
+    0 25px 35px -5px rgba(0, 0, 0, 0.08),
+    0 15px 15px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Marquee */
+.marquee-container {
+  display: flex;
+  width: 200%;
+}
+.marquee-content {
+  display: flex;
+  justify-content: space-around;
+  width: 50%;
+}
+
+/* Scroll Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 {
+  transition-delay: 0.1s;
+}
+.reveal-delay-2 {
+  transition-delay: 0.2s;
+}
+.reveal-delay-3 {
+  transition-delay: 0.3s;
+}
+
+/* Fade-in animation for dynamically loaded content (e.g. API-loaded job cards) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero Animated Background */
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+.blob-1 {
+  background: radial-gradient(
+    circle,
+    rgba(255, 230, 240, 0.8) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+.blob-2 {
+  background: radial-gradient(
+    circle,
+    rgba(220, 235, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+.blob-3 {
+  background: radial-gradient(
+    circle,
+    rgba(255, 245, 210, 0.8) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+
+.concave-cut {
+  -webkit-mask: radial-gradient(
+    circle at top right,
+    transparent 26px,
+    black 27px
+  );
+  mask: radial-gradient(circle at top right, transparent 26px, black 27px);
+}

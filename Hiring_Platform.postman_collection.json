@@ -1,0 +1,486 @@
+{
+  "info": {
+    "name": "Hiring Platform API",
+    "description": "Comprehensive Postman collection for the Hiring Platform Full-Stack Application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "your_jwt_token_here",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"applicant@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"applicant\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"applicant@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-email?token=your_token_here",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-email"],
+              "query": [ { "key": "token", "value": "your_token_here" } ]
+            }
+          }
+        },
+        {
+          "name": "Get Current User (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/forgot-password", "host": ["{{baseUrl}}"], "path": ["auth", "forgot-password"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"applicant@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/auth/reset-password", "host": ["{{baseUrl}}"], "path": ["auth", "reset-password"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"your_reset_token\",\n  \"password\": \"newpassword123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/users/me", "host": ["{{baseUrl}}"], "path": ["users", "me"] }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/users/me", "host": ["{{baseUrl}}"], "path": ["users", "me"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"bio\": \"Software Engineer\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Saved Jobs",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/users/me/saved-jobs", "host": ["{{baseUrl}}"], "path": ["users", "me", "saved-jobs"] }
+          }
+        },
+        {
+          "name": "Get Public Profile",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/users/:userId", "host": ["{{baseUrl}}"], "path": ["users", ":userId"], "variable": [{"key": "userId", "value": "uuid_here"}] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recruiter",
+      "item": [
+        {
+          "name": "Get Recruiter Profile",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/recruiter/profile", "host": ["{{baseUrl}}"], "path": ["recruiter", "profile"] }
+          }
+        },
+        {
+          "name": "Create Recruiter Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/recruiter/profile", "host": ["{{baseUrl}}"], "path": ["recruiter", "profile"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company_name\": \"Tech Corp\",\n  \"industry\": \"Software\",\n  \"company_size\": \"50-200\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Recruiter Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/recruiter/profile", "host": ["{{baseUrl}}"], "path": ["recruiter", "profile"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Leading tech firm\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "List/Search Jobs (Public)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/jobs", "host": ["{{baseUrl}}"], "path": ["jobs"] }
+          }
+        },
+        {
+          "name": "Get Job Details",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/jobs/:id", "host": ["{{baseUrl}}"], "path": ["jobs", ":id"], "variable": [{"key": "id", "value": "uuid_here"}] }
+          }
+        },
+        {
+          "name": "List My Jobs (Recruiter)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/jobs/my/listings", "host": ["{{baseUrl}}"], "path": ["jobs", "my", "listings"] }
+          }
+        },
+        {
+          "name": "Create Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/jobs", "host": ["{{baseUrl}}"], "path": ["jobs"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Frontend Developer\",\n  \"description\": \"Build awesome UIs.\",\n  \"type\": \"full-time\",\n  \"skills\": [\"React\", \"TypeScript\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Match Job Skills (AI)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/jobs/match", "host": ["{{baseUrl}}"], "path": ["jobs", "match"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userSkills\": [\"React\", \"Node\"],\n  \"jobSkills\": [\"React\", \"TypeScript\", \"AWS\"]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "item": [
+        {
+          "name": "Apply for Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/applications/jobs/:jobId", "host": ["{{baseUrl}}"], "path": ["applications", "jobs", ":jobId"], "variable": [{"key": "jobId", "value": "uuid_here"}] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cover_letter\": \"I am very interested...\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Applications",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/applications/my", "host": ["{{baseUrl}}"], "path": ["applications", "my"] }
+          }
+        },
+        {
+          "name": "Get Job Applications (Recruiter)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/applications/jobs/:jobId", "host": ["{{baseUrl}}"], "path": ["applications", "jobs", ":jobId"], "variable": [{"key": "jobId", "value": "uuid_here"}] }
+          }
+        },
+        {
+          "name": "Update Application Status (Recruiter)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/applications/:id/status", "host": ["{{baseUrl}}"], "path": ["applications", ":id", "status"], "variable": [{"key": "id", "value": "uuid_here"}] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SHORTLISTED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pipeline",
+      "item": [
+        {
+          "name": "Get Pipeline Board",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/pipeline/board/:jobId", "host": ["{{baseUrl}}"], "path": ["pipeline", "board", ":jobId"], "variable": [{"key": "jobId", "value": "uuid_here"}] }
+          }
+        },
+        {
+          "name": "Move Stage",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/pipeline/move-stage", "host": ["{{baseUrl}}"], "path": ["pipeline", "move-stage"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobId\": \"uuid\",\n  \"candidateId\": \"uuid\",\n  \"toStage\": \"INTERVIEW\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Get Conversations",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/messages/conversations", "host": ["{{baseUrl}}"], "path": ["messages", "conversations"] }
+          }
+        },
+        {
+          "name": "Get Messages in Conversation",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/messages/conversations/:id", "host": ["{{baseUrl}}"], "path": ["messages", "conversations", ":id"], "variable": [{"key": "id", "value": "uuid_here"}] }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/messages/conversations/:id", "host": ["{{baseUrl}}"], "path": ["messages", "conversations", ":id"], "variable": [{"key": "id", "value": "uuid_here"}] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Hello!\",\n  \"recipientId\": \"uuid_here\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Credits & Payments",
+      "item": [
+        {
+          "name": "Get Balance",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/credits/balance", "host": ["{{baseUrl}}"], "path": ["credits", "balance"] }
+          }
+        },
+        {
+          "name": "Get Credit History",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/credits/history", "host": ["{{baseUrl}}"], "path": ["credits", "history"] }
+          }
+        },
+        {
+          "name": "Get Payment Plans",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/payments/plans", "host": ["{{baseUrl}}"], "path": ["payments", "plans"] }
+          }
+        },
+        {
+          "name": "Initiate Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/payments/checkout", "host": ["{{baseUrl}}"], "path": ["payments", "checkout"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"uuid_here\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roadmaps",
+      "item": [
+        {
+          "name": "List Roadmaps",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/roadmaps", "host": ["{{baseUrl}}"], "path": ["roadmaps"] }
+          }
+        },
+        {
+          "name": "Get Roadmap Detail",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/roadmaps/:id", "host": ["{{baseUrl}}"], "path": ["roadmaps", ":id"], "variable": [{"key": "id", "value": "uuid_here"}] }
+          }
+        },
+        {
+          "name": "Get Roadmap Nodes",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/roadmaps/:id/nodes", "host": ["{{baseUrl}}"], "path": ["roadmaps", ":id", "nodes"], "variable": [{"key": "id", "value": "uuid_here"}] }
+          }
+        },
+        {
+          "name": "Trigger Ingestion",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/roadmaps/ingest", "host": ["{{baseUrl}}"], "path": ["roadmaps", "ingest"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get Recruiter Summary",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/analytics/summary", "host": ["{{baseUrl}}"], "path": ["analytics", "summary"] }
+          }
+        },
+        {
+          "name": "Get Funnel",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/analytics/jobs/:jobId/funnel", "host": ["{{baseUrl}}"], "path": ["analytics", "jobs", ":jobId", "funnel"], "variable": [{"key": "jobId", "value": "uuid"}] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+          }
+        },
+        {
+          "name": "List Jobs",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/admin/jobs", "host": ["{{baseUrl}}"], "path": ["admin", "jobs"] }
+          }
+        },
+        {
+          "name": "Get Metrics",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/admin/metrics", "host": ["{{baseUrl}}"], "path": ["admin", "metrics"] }
+          }
+        }
+      ]
+    }
+  ]
+}

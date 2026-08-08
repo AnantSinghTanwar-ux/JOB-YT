@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "1063648473776",
+        "project_id": "jobyt-d9e0b",
+        "storage_bucket": "jobyt-d9e0b.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:1063648473776:android:403fafcdbe081b69f80175",
+                "android_client_info": {
+                    "package_name": "com.jobyt.mobile"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyA-SQkuB9zkpq3sV2j6lNX2Ksjxef5jqwc"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}

@@ -1,0 +1,48 @@
+{
+  "source": {
+    "url": "http://localhost:3001/",
+    "extractedAt": "2026-06-11T17:28:16.370Z",
+    "extractor": "dembrandt"
+  },
+  "colors": {
+    "primary": "rgb(195, 255, 61)",
+    "palette": [
+      "rgb(195, 255, 61)"
+    ],
+    "cssVariables": {}
+  },
+  "typography": {
+    "headingFont": "Myanmar Khyay",
+    "bodyFont": "Myanmar Khyay"
+  },
+  "spacing": {
+    "scale": [
+      "1px",
+      "2px",
+      "3px",
+      "4px",
+      "5px",
+      "7px",
+      "8px",
+      "10px",
+      "12px",
+      "14px",
+      "16px",
+      "24px",
+      "32px",
+      "40px",
+      "44px",
+      "48px",
+      "64px",
+      "80px",
+      "93px",
+      "96px"
+    ]
+  },
+  "radius": {
+    "scale": []
+  },
+  "shadows": {
+    "scale": []
+  }
+}

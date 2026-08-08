@@ -1,0 +1,8 @@
+export const CREDIT_COSTS = {
+  POST_JOB: 10,
+  APPLY_JOB: 10,
+  COACH_MESSAGE_GENERAL: 1,
+  COACH_MESSAGE_ADVANCED: 2,
+} as const;
+
+

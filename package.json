@@ -1,0 +1,11 @@
+{
+  "name": "hiring-platform-root",
+  "private": true,
+  "workspaces": [
+    "backend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=backend",
+    "start": "npm start --workspace=backend"
+  }
+}
