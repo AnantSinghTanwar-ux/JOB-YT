@@ -604,7 +604,7 @@ export default function RecruiterLayout({ children }: { children: React.ReactNod
 
         <RecruiterFloatingSidebar />
 
-        <main className="pt-24 lg:pl-24 xl:pl-28 pb-24 lg:pb-8 px-4 sm:px-6 lg:px-8">
+        <main className="pt-24 lg:pl-[14rem] xl:pl-[15rem] pb-24 lg:pb-8 px-4 sm:px-6 lg:px-8">
           {children}
         </main>
       </div>

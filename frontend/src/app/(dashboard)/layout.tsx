@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <DashboardSidebar />
 
                 {/* Main content area — offset for floating sidebar on desktop, bottom bar on mobile */}
-                <main className="pt-28 sm:pt-24 lg:pt-24 lg:pl-24 xl:pl-28 pb-24 lg:pb-8 px-4 sm:px-6 lg:px-8">
+                <main className="pt-28 sm:pt-24 lg:pt-24 lg:pl-[14rem] xl:pl-[15rem] pb-24 lg:pb-8 px-4 sm:px-6 lg:px-8">
                     {children}
                 </main>
             </div>
