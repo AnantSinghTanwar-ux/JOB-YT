@@ -481,7 +481,7 @@ export default function ProfilePage() {
         <NotificationPreferences />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[800px_484px] gap-6 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(300px,484px)] gap-6 items-start">
         {/* Left Column */}
         <div className="space-y-6">
           {/* Beige Form Container */}

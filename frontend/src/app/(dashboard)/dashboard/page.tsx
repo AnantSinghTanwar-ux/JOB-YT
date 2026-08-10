@@ -94,7 +94,7 @@ export default function DashboardPage() {
 
         try {
             const response = await api.getPaginated<BackendJob>(
-                `/jobs?page=${page}&limit=${JOBS_PAGE_SIZE}&exclude_applied=true`,
+                `/jobs?page=${page}&limit=${JOBS_PAGE_SIZE}`,
             );
 
             const jobsData = response.data ?? [];
