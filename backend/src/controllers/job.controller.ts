@@ -114,7 +114,7 @@ export const JobController = {
         salary_max,
         skills: normalizedSkills,
         excludeAppliedForApplicantId,
-        onlyApproved: isDiscoveryMode,
+
         prioritizeSpazorlabs: isDiscoveryMode,
       });
 
