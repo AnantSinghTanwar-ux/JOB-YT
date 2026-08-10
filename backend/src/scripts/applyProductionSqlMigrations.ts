@@ -4,6 +4,7 @@ import path from 'node:path';
 import pool from '../config/database';
 
 const MIGRATIONS = [
+  '004_create_roadmap_tables.sql',
   '007_create_interviews_table.sql',
   '007_add_api_keys.sql',
   '007_create_ai_interview_tables.sql',
