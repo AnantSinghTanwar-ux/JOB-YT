@@ -204,9 +204,16 @@ export const AdminService = {
     return { transactions: dataRes.rows, total: parseInt(countRes.rows[0].count) };
   },
 
-  async adjustCredits(adminId: string, userId: string, amount: number, reason: string) {
-    const user = await UserModel.findById(userId);
+  async adjustCredits(adminId: string, userIdentifier: string, amount: number, reason: string) {
+    let user;
+    if (userIdentifier.includes('@')) {
+      user = await UserModel.findByEmail(userIdentifier);
+    } else {
+      user = await UserModel.findById(userIdentifier).catch(() => null);
+    }
     if (!user) throw new AppError('User not found', 404);
+    
+    const userId = user.id;
     const description = `Admin adjustment: ${reason}`;
     if (amount > 0) {
       await CreditService.addCredits(userId, amount, description, adminId);
