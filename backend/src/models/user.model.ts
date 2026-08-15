@@ -125,7 +125,7 @@ export const UserModel = {
     const [countRes, dataRes] = await Promise.all([
       pool.query(`SELECT COUNT(*) FROM users ${where}`, params),
       pool.query(
-        `SELECT id, email, role, is_verified as email_verified, credit_balance, banned_at, created_at FROM users ${where}
+        `SELECT id, email, role, is_verified as email_verified, credit_balance, created_at FROM users ${where}
          ORDER BY created_at DESC LIMIT $${idx} OFFSET $${idx + 1}`,
         [...params, filters.limit, offset],
       ),
