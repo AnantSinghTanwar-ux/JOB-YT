@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "banned_at" TIMESTAMPTZ(6);

@@ -109,7 +109,7 @@ export const UserModel = {
     let idx = 1;
 
     if (filters.search) {
-      conditions.push(`email ILIKE $${idx}`);
+      conditions.push(`(email ILIKE $${idx} OR id::text ILIKE $${idx})`);
       params.push(`%${filters.search}%`);
       idx++;
     }

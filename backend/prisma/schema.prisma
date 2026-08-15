@@ -373,6 +373,7 @@ model users {
   email_alerts_enabled                            Boolean                    @default(true)
   whatsapp_alerts_enabled                         Boolean                    @default(true)
   subscription_expires_at                         DateTime?                  @db.Timestamptz(6)
+  banned_at                                       DateTime?                  @db.Timestamptz(6)
   admin_audit_log                                 admin_audit_log[]
   applicant_profiles                              applicant_profiles?
   applications                                    applications[]
