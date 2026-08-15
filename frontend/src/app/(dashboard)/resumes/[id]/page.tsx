@@ -72,7 +72,7 @@ const resolveResumeUrl = (url?: string | null): string | null => {
   if (!url) return null;
   if (/^https?:\/\//i.test(url)) return url;
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hiringplatform-production-180d.up.railway.app/api/v1';
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://content-connection-production-f00a.up.railway.app/api/v1';
   const origin = apiBase.replace(/\/api\/v1\/?$/, '');
   return url.startsWith('/') ? `${origin}${url}` : `${origin}/${url}`;
 };
@@ -207,7 +207,7 @@ export default function ResumeViewPage({ params }: { params: Promise<{ id: strin
     if (latexLoading) return;
     setLatexLoading(true);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hiringplatform-production-180d.up.railway.app/api/v1';
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://content-connection-production-f00a.up.railway.app/api/v1';
       const response = await fetch(`${apiBase}/users/me/resume-latex?download=true`, {
         credentials: 'include',
       });

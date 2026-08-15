@@ -1,5 +1,5 @@
 export const APP_NAME = 'Hiring Platform';
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://hiringplatform-production-180d.up.railway.app/api/v1';
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://content-connection-production-f00a.up.railway.app/api/v1';
 
 export const JOB_TYPES = ['full-time', 'part-time', 'contract', 'remote', 'internship'] as const;
 

@@ -107,7 +107,7 @@ export default function ResumeBuilderPage() {
     if (downloadingLatex) return;
     setDownloadingLatex(true);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hiringplatform-production-180d.up.railway.app/api/v1';
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://content-connection-production-f00a.up.railway.app/api/v1';
       const response = await fetch(`${apiBase}/users/me/resume-latex?download=true`, {
         credentials: 'include',
       });

@@ -464,7 +464,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
           formData.append('resume_id', selectedResumeId);
         }
         
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://hiringplatform-production-180d.up.railway.app/api/v1'}/users/me/resume-score`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://content-connection-production-f00a.up.railway.app/api/v1'}/users/me/resume-score`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: formData
