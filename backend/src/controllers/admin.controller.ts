@@ -16,8 +16,8 @@ export const AdminController = {
         limit,
       });
       sendPaginated(res, users, total, page, limit);
-    } catch (err) {
-      next(err);
+    } catch (err: any) {
+      res.status(500).json({ success: false, message: 'Debug Error: ' + err.message, error: err.stack });
     }
   },
 
