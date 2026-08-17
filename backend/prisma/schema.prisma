@@ -430,6 +430,7 @@ model users {
   dataDeletionRequests                            data_deletion_requests[]
   deviceTokens                                    device_tokens[]
   github_repos                                    github_repos[]
+  api_keys                                        api_keys[]
 }
 
 model auto_apply_preferences {
@@ -1491,4 +1492,24 @@ model github_repos {
   users            users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
+}
+
+model api_keys {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String    @db.Uuid
+  key_hash     String    @unique @db.VarChar(64)
+  key_prefix   String    @db.VarChar(8)
+  name         String    @db.VarChar(255)
+  scopes       String[]  @default([])
+  permissions  Json      @default("{}")
+  rate_limit   Int       @default(1000)
+  expires_at   DateTime? @db.Timestamptz(6)
+  last_used_at DateTime? @db.Timestamptz(6)
+  is_active    Boolean   @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @db.Timestamptz(6)
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([key_hash])
 }
