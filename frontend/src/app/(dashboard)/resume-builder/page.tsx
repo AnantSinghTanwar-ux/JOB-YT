@@ -107,17 +107,8 @@ export default function ResumeBuilderPage() {
     if (downloadingLatex) return;
     setDownloadingLatex(true);
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://content-connection-production-f00a.up.railway.app/api/v1';
-      const response = await fetch(`${apiBase}/users/me/resume-latex?download=true`, {
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to download LaTeX resume.');
-      }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      const blob = await api.getBlob('/users/me/resume-latex?download=true');
+      const url = URL.createObjectURL(blob as Blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = 'resume.tex';

@@ -203,7 +203,7 @@ export const beginOAuthRedirect = async (
   // Provider is identified in the callback via the `state` parameter stored in localStorage.
   const callbackWithProvider = provider === 'github'
     ? getOAuthRedirectUri()
-    : getOAuthRedirectUri(provider === 'linkedin' ? undefined : provider);
+    : getOAuthRedirectUri(provider);
   const redirectUri = encodeURIComponent(callbackWithProvider);
 
   saveOAuthState(provider, state);

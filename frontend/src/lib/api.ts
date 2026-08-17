@@ -302,4 +302,12 @@ export const api = {
       throw toApiError(error);
     }
   },
+  getBlob: async (path: string, config?: AxiosRequestConfig) => {
+    try {
+      const res = await apiClient.get(path, { ...config, responseType: 'blob' });
+      return res.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
 };
