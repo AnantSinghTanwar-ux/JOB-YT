@@ -250,25 +250,25 @@ ${form.description}
             {/* Salary Range */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] text-black font-semibold" style={{ fontFamily: 'Myanmar Khyay, sans-serif' }}>Min Salary (USD) *</label>
+                <label className="text-[14px] text-black font-semibold" style={{ fontFamily: 'Myanmar Khyay, sans-serif' }}>Min Salary (₹) *</label>
                 <input
                   type="number"
                   required
                   value={form.salary_min}
                   onChange={(e) => set('salary_min', e.target.value)}
-                  placeholder="e.g. 80000"
+                  placeholder="e.g. 500000"
                   className="w-full bg-white border-[0.8px] border-[#C3FF3D] rounded-lg p-[15px_12px] text-[14px] text-black outline-none focus:ring-1 focus:ring-[#C3FF3D]"
                   style={{ fontFamily: 'Myanmar Sans Pro, sans-serif' }}
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] text-black font-semibold" style={{ fontFamily: 'Myanmar Khyay, sans-serif' }}>Max Salary (USD) *</label>
+                <label className="text-[14px] text-black font-semibold" style={{ fontFamily: 'Myanmar Khyay, sans-serif' }}>Max Salary (₹) *</label>
                 <input
                   type="number"
                   required
                   value={form.salary_max}
                   onChange={(e) => set('salary_max', e.target.value)}
-                  placeholder="e.g. 120000"
+                  placeholder="e.g. 800000"
                   className="w-full bg-white border-[0.8px] border-[#C3FF3D] rounded-lg p-[15px_12px] text-[14px] text-black outline-none focus:ring-1 focus:ring-[#C3FF3D]"
                   style={{ fontFamily: 'Myanmar Sans Pro, sans-serif' }}
                 />

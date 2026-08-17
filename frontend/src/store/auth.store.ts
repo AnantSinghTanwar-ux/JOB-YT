@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { AuthUser } from '@/types';
 import { authStorage, decodeToken } from '@/lib/auth';
 import { api, tokenStore } from '@/lib/api';
+import { signOut } from 'next-auth/react';
 
 interface AuthState {
   user: AuthUser | null;
@@ -173,6 +174,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
 
     if (typeof window !== 'undefined') {
+      signOut({ redirect: false }).catch(() => {});
+      
       const pathname = window.location.pathname;
       const PUBLIC_ROUTES = [
         '/',

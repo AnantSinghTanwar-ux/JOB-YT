@@ -161,6 +161,19 @@ const mapJobRow = (row: Record<string, any>): JobRow => {
   } as JobRow;
 };
 
+const updateSearchVector = async (id: string) => {
+  await pool.query(
+    `UPDATE jobs 
+     SET search_vector = 
+       setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+       setweight(to_tsvector('english', coalesce(description, '')), 'B') ||
+       setweight(to_tsvector('english', coalesce(location, '')), 'C') ||
+       setweight(to_tsvector('english', coalesce(array_to_string(skills, ' '), '')), 'B')
+     WHERE id = $1`,
+    [id]
+  );
+};
+
 export const JobModel = {
   async findById(id: string, client?: PoolClient): Promise<Job | null> {
     const db = client ?? pool;
@@ -357,6 +370,8 @@ export const JobModel = {
           ...(hasQuestionsColumn ? [JSON.stringify(questions)] : []),
         ],
       );
+      
+    if (rows[0]) await updateSearchVector(rows[0].id);
     return mapJobRow(rows[0]);
   },
 
@@ -397,6 +412,7 @@ export const JobModel = {
         ...(hasQuestionsColumn ? ['[]'] : []),
       ],
     );
+    if (rows[0]) await updateSearchVector(rows[0].id);
     return mapJobRow(rows[0]);
   },
 
@@ -555,6 +571,7 @@ export const JobModel = {
         ],
       );
 
+    if (rows[0]) await updateSearchVector(rows[0].id);
     return mapJobRow(rows[0]);
   },
 
@@ -610,6 +627,7 @@ export const JobModel = {
       `UPDATE jobs SET ${setClause}, updated_at = NOW() WHERE id = $${sanitizedFields.length + 1} AND deleted_at IS NULL RETURNING *`,
       [...values, id],
     );
+    if (rows[0]) await updateSearchVector(rows[0].id);
     return mapJobRow(rows[0]);
   },
 

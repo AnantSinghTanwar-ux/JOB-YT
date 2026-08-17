@@ -42,7 +42,7 @@ async function cloudinaryUpload(
       use_filename: true,
       unique_filename: true,
       overwrite: false,
-      type: isResume ? 'authenticated' : 'upload',
+      type: 'upload',
     });
 
     return {
