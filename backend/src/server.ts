@@ -10,6 +10,7 @@ import { InsightsCronService } from './services/insightsCron.service';
 import { validateEnvironment } from './config/env.validator';
 
 const PORT = parseInt(process.env.PORT || '5001', 10);
+const REDIS_REQUIRED = process.env.REDIS_REQUIRED === 'true';
 let httpServer: http.Server;
 
 async function startServer() {
@@ -31,7 +32,7 @@ async function startServer() {
     // 3. Optional Services
     initFirebase();
 
-    // 4. Test Redis (Required for workers and queues)
+    // 4. Test Redis (required only when REDIS_REQUIRED=true)
     try {
       await redis.connect();
       await redis.ping();
@@ -40,8 +41,16 @@ async function startServer() {
       const message = err instanceof Error ? err.message : String(err);
       console.error(`[Server] Redis connection failed: ${message}`);
       redis.disconnect(); // Stop background reconnect attempts
-      console.error('[Server] Redis is required for background workers. Exiting.');
-      process.exit(1);
+
+      if (REDIS_REQUIRED) {
+        console.error('[Server] REDIS_REQUIRED=true and Redis is unavailable. Exiting.');
+        process.exit(1);
+      }
+
+      console.warn(
+        '[Server] Continuing without Redis (REDIS_REQUIRED is not true). ' +
+          'Queue/worker features will remain disabled until Redis is available.',
+      );
     }
 
     // 5. Create HTTP server (required for Socket.io)
@@ -58,17 +67,19 @@ async function startServer() {
       );
       InsightsCronService.startScheduler();
 
-      // Initialize background workers and scheduler ONLY if Redis is available
+      // Initialize background workers and queue-backed schedulers only when Redis is available
       try {
         if (isRedisAvailable()) {
           const { startWorkers } = await import('./workers');
           startWorkers();
           const { setupDailyScheduler } = await import('./scheduler/dailyScheduler');
           await setupDailyScheduler();
+
+          const { setupNotificationScheduler } = await import('./scheduler/notificationScheduler');
+          setupNotificationScheduler();
+        } else {
+          console.warn('[Server] Redis unavailable. Skipping workers and queue-backed schedulers.');
         }
-        
-        const { setupNotificationScheduler } = await import('./scheduler/notificationScheduler');
-        setupNotificationScheduler(); // Does not strictly require BullMQ if using pure node-cron, but the actions enqueue to BullMQ
       } catch (err) {
         console.error('[Server] Failed to initialize workers or scheduler:', err);
       }
