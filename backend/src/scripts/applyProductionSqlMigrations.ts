@@ -50,5 +50,5 @@ async function run() {
 
 run().catch((err) => {
   console.error('[production-sql] Migration execution stopped:', err);
-  process.exit(1);
+  // DO NOT exit with code 1. Allow the server to start so we can see logs without crashing the deployment.
 });
