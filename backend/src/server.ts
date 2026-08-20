@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import http from 'http';
 import app from './app';
-import { connectDB } from './config/database';
+import pool, { connectDB } from './config/database';
+import prisma from './config/prisma';
 import redis, { isRedisAvailable } from './config/redis';
 import { initSocket } from './config/socket';
 import { initFirebase } from './config/firebase';
@@ -9,6 +10,7 @@ import { InsightsCronService } from './services/insightsCron.service';
 import { validateEnvironment } from './config/env.validator';
 
 const PORT = parseInt(process.env.PORT || '5001', 10);
+let httpServer: http.Server;
 
 async function startServer() {
   try {
@@ -21,29 +23,30 @@ async function startServer() {
     // 3. Optional Services
     initFirebase();
 
-    // Test Redis (non-blocking for local Docker runs)
+    // 4. Test Redis (Required for workers and queues)
     try {
-      // With lazyConnect enabled, connect explicitly.
       await redis.connect();
       await redis.ping();
-      console.log('Redis connected');
+      console.log('[Server] Redis connected');
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      console.warn(`Redis not available, continuing without Redis connection (${message})`);
+      console.error(`[Server] Redis connection failed: ${message}`);
       redis.disconnect(); // Stop background reconnect attempts
+      console.error('[Server] Redis is required for background workers. Exiting.');
+      process.exit(1);
     }
 
-    // 4. Create HTTP server (required for Socket.io)
-    const httpServer = http.createServer(app);
+    // 5. Create HTTP server (required for Socket.io)
+    httpServer = http.createServer(app);
 
     // Initialise Socket.io
     initSocket(httpServer);
-    console.log('Socket.io initialised');
+    console.log('[Server] Socket.io initialised');
 
-    // 5. Start Server
+    // 6. Start Server
     httpServer.listen(PORT, async () => {
       console.log(
-        `Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`,
+        `[Server] Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`,
       );
       InsightsCronService.startScheduler();
 
@@ -54,20 +57,72 @@ async function startServer() {
           startWorkers();
           const { setupDailyScheduler } = await import('./scheduler/dailyScheduler');
           await setupDailyScheduler();
-        } else {
-          console.warn('[Scheduler] Redis is not available. Background workers and Daily scheduler will NOT be started.');
         }
         
         const { setupNotificationScheduler } = await import('./scheduler/notificationScheduler');
         setupNotificationScheduler(); // Does not strictly require BullMQ if using pure node-cron, but the actions enqueue to BullMQ
       } catch (err) {
-        console.error('Failed to initialize workers or scheduler:', err);
+        console.error('[Server] Failed to initialize workers or scheduler:', err);
       }
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('[Server] Failed to start server:', error);
     process.exit(1);
   }
 }
+
+// ── Graceful Shutdown ───────────────────────────────────────────────────────
+async function gracefulShutdown(signal: string) {
+  console.log(`\n[Server] Received ${signal}. Starting graceful shutdown...`);
+
+  // 1. Stop accepting new HTTP requests
+  if (httpServer) {
+    await new Promise<void>((resolve) => {
+      httpServer.close(() => {
+        console.log('[Server] HTTP server closed');
+        resolve();
+      });
+    });
+  }
+
+  // 2. Stop workers
+  try {
+    const { stopWorkers } = await import('./workers');
+    await stopWorkers();
+    console.log('[Server] Background workers stopped');
+  } catch (err) {
+    console.error('[Server] Error stopping workers:', err);
+  }
+
+  // 3. Disconnect Redis
+  try {
+    redis.disconnect();
+    console.log('[Server] Redis disconnected');
+  } catch (err) {
+    console.error('[Server] Error disconnecting Redis:', err);
+  }
+
+  // 4. Disconnect Prisma
+  try {
+    await prisma.$disconnect();
+    console.log('[Server] Prisma disconnected');
+  } catch (err) {
+    console.error('[Server] Error disconnecting Prisma:', err);
+  }
+
+  // 5. Disconnect pg pool
+  try {
+    await pool.end();
+    console.log('[Server] Database pool closed');
+  } catch (err) {
+    console.error('[Server] Error closing database pool:', err);
+  }
+
+  console.log('[Server] Shutdown complete. Exiting.');
+  process.exit(0);
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 startServer();

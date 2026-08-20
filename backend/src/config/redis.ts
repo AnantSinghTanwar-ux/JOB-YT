@@ -3,7 +3,7 @@ import Redis, { RedisOptions } from 'ioredis';
 const LOG_PREFIX = '[Redis]';
 
 // ── Connection Construction ─────────────────────────────────────────────────
-const sharedOptions: Partial<RedisOptions> = {
+export const sharedOptions: Partial<RedisOptions> = {
   family: 4,
   lazyConnect: true,
   enableOfflineQueue: false,
@@ -16,15 +16,23 @@ const sharedOptions: Partial<RedisOptions> = {
   },
 };
 
-const redis = process.env.REDIS_URL
-  ? new Redis(process.env.REDIS_URL, sharedOptions)
-  : new Redis({
-      host: process.env.REDIS_HOST || '127.0.0.1',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      username: process.env.REDIS_USER || 'default',
-      password: process.env.REDIS_PASSWORD || undefined,
-      ...sharedOptions,
-    });
+export function getRedisConfig(): { url?: string; options: RedisOptions } {
+  const options: RedisOptions = { ...sharedOptions };
+  
+  if (process.env.REDIS_URL) {
+    return { url: process.env.REDIS_URL, options };
+  }
+  
+  options.host = process.env.REDIS_HOST || '127.0.0.1';
+  options.port = parseInt(process.env.REDIS_PORT || '6379', 10);
+  options.username = process.env.REDIS_USER || 'default';
+  options.password = process.env.REDIS_PASSWORD || undefined;
+  
+  return { options };
+}
+
+const config = getRedisConfig();
+const redis = config.url ? new Redis(config.url, config.options) : new Redis(config.options);
 
 // ── Availability Tracking ───────────────────────────────────────────────────
 let _redisAvailable = false;

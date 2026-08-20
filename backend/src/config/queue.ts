@@ -1,5 +1,6 @@
 import { Queue, QueueOptions } from 'bullmq';
 import IORedis from 'ioredis';
+import { getRedisConfig } from './redis';
 
 const LOG_PREFIX = '[BullMQ]';
 
@@ -15,27 +16,16 @@ function getRedisConnection(): IORedis | null {
   if (_connectionFailed) return null;
 
   try {
+    const baseConfig = getRedisConfig();
     const queueRedisOptions: any = {
+      ...baseConfig.options,
       maxRetriesPerRequest: null,
-      family: 4,
-      retryStrategy(times: number) {
-        if (times > 3) {
-          console.warn(`${LOG_PREFIX} Max connection retries reached. Stopping reconnect attempts.`);
-          return null; // Stop retrying
-        }
-        return Math.min(times * 50, 2000);
-      }
+      lazyConnect: false, // Queue connections need to be active
     };
 
-    _redisConnection = process.env.REDIS_URL
-      ? new IORedis(process.env.REDIS_URL, queueRedisOptions)
-      : new IORedis({
-          host: process.env.REDIS_HOST || 'localhost',
-          port: parseInt(process.env.REDIS_PORT || '6379', 10),
-          username: process.env.REDIS_USER || 'default',
-          password: process.env.REDIS_PASSWORD || undefined,
-          ...queueRedisOptions
-        });
+    _redisConnection = baseConfig.url
+      ? new IORedis(baseConfig.url, queueRedisOptions)
+      : new IORedis(queueRedisOptions);
 
     _redisConnection.on('error', (err) => {
       if (!_connectionFailed) {
