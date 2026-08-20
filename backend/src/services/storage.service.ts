@@ -51,11 +51,32 @@ async function cloudinaryUpload(
       publicId: uploadResult.public_id,
     };
   } catch (err) {
-    throw Object.assign(new Error('Cloudinary upload failed'), {
-      statusCode: 502,
-      code: 'CLOUDINARY_UPLOAD_FAILED',
-      details: err,
-    });
+    const cloudinaryErr = err as {
+      message?: string;
+      http_code?: number;
+      name?: string;
+    };
+    const reason = (cloudinaryErr.message || 'Unknown Cloudinary error').trim();
+    const dependencyStatus = typeof cloudinaryErr.http_code === 'number' ? cloudinaryErr.http_code : undefined;
+
+    const isAuthOrConfigIssue = dependencyStatus === 401 || dependencyStatus === 403;
+    throw Object.assign(
+      new Error(
+        isAuthOrConfigIssue
+          ? 'Cloudinary authentication failed. Verify CLOUDINARY credentials in deployment variables.'
+          : `Cloudinary upload failed: ${reason}`,
+      ),
+      {
+        statusCode: isAuthOrConfigIssue ? 500 : 502,
+        code: isAuthOrConfigIssue ? 'CLOUDINARY_AUTH_FAILED' : 'CLOUDINARY_UPLOAD_FAILED',
+        details: {
+          provider: 'cloudinary',
+          providerStatus: dependencyStatus || null,
+          providerError: reason,
+          providerName: cloudinaryErr.name || null,
+        },
+      },
+    );
   } finally {
     await fs.unlink(tempPath).catch(() => undefined);
   }
