@@ -109,8 +109,16 @@ export function parseRoadmap(raw: RawRoadmapData): ParseResult {
   }
 
   // Process all top-level nodes
-  for (const node of raw.nodes) {
+  const topLevelNodes = raw.nodes.filter(n => !n.parentId);
+  for (const node of topLevelNodes) {
     processNode(node, null, 0);
+  }
+
+  // Fallback for isolated cycles or nodes missed by top-level traversal
+  for (const node of raw.nodes) {
+    if (!visitedRawNodes.has(node.id)) {
+      processNode(node, null, 0);
+    }
   }
 
   // Parse edges — map from raw IDs to slugs
