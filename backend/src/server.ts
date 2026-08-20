@@ -19,6 +19,14 @@ async function startServer() {
 
     // 2. Connect to database
     await connectDB();
+
+    // 2b. Apply supplementary SQL migrations (non-fatal)
+    try {
+      const { applyProductionSqlMigrations } = await import('./scripts/applyProductionSqlMigrations');
+      await applyProductionSqlMigrations(pool);
+    } catch (err) {
+      console.error('[Server] Production SQL migrations failed (non-fatal):', err instanceof Error ? err.message : err);
+    }
     
     // 3. Optional Services
     initFirebase();

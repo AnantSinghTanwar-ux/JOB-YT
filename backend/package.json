@@ -4,7 +4,7 @@
   "description": "Hiring Platform REST API — Node.js + Express + TypeScript",
   "main": "dist/server.js",
   "scripts": {
-    "prestart": "npx prisma migrate deploy && node dist/scripts/applyProductionSqlMigrations.js",
+    "prestart": "npx prisma migrate deploy || echo '[prestart] prisma migrate deploy failed — server will still start'",
     "dev": "dotenv -o -e .env -- nodemon --watch src --ext ts --exec ts-node src/server.ts",
     "build": "npx prisma generate && tsc",
     "start": "node dist/server.js",
