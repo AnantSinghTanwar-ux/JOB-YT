@@ -19,7 +19,9 @@ function elapsedMs(start: bigint): string {
 }
 
 async function run() {
-  const migrationsDir = path.resolve(__dirname, '..', 'config', 'migrations');
+  const isCompiled = __dirname.includes('dist');
+  const baseDir = isCompiled ? path.resolve(__dirname, '../../src') : path.resolve(__dirname, '..');
+  const migrationsDir = path.join(baseDir, 'config', 'migrations');
   const client = await pool.connect();
 
   try {
