@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 import { JwtPayload, UserRole } from '../types';
 import { ApiKeyService } from '../services/apiKey.service';
 import { RateLimitService } from '../services/rateLimit.service';
+import { verifyToken } from '../utils/jwt';
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization;
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+      const decoded = verifyToken(token) as JwtPayload;
       req.user = decoded;
       next();
       return;
@@ -77,7 +77,7 @@ export const optionalAuth = (req: Request, _res: Response, next: NextFunction): 
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const decoded = verifyToken(token) as JwtPayload;
     req.user = decoded;
   } catch {
     // Ignore invalid token for optional auth routes to keep them public.

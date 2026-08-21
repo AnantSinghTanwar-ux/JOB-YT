@@ -181,10 +181,16 @@ apiClient.interceptors.response.use(
   async (error: AxiosError<ErrorPayload>) => {
     const originalRequest = error.config as RetryableRequestConfig | undefined;
     const status = error.response?.status;
+    const unauthorizedTransportError =
+      !status &&
+      (error.code === 'ERR_HTTP2_PROTOCOL_ERROR' ||
+        /401|unauthorized/i.test(error.message || '') ||
+        /401|unauthorized/i.test(String((error as unknown as { cause?: unknown }).cause || '')));
+    const effectiveStatus = status ?? (unauthorizedTransportError ? 401 : undefined);
     const isRefreshCall = originalRequest?.url?.includes(REFRESH_PATH) ?? false;
 
-    if (!originalRequest || status !== 401 || isRefreshCall || originalRequest._retry) {
-      if (status === 401 && isRefreshCall) {
+    if (!originalRequest || effectiveStatus !== 401 || isRefreshCall || originalRequest._retry) {
+      if (effectiveStatus === 401 && isRefreshCall) {
         performLogoutRedirect();
       }
       return Promise.reject(toApiError(error));

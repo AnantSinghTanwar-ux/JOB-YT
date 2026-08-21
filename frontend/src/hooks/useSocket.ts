@@ -9,6 +9,22 @@ export const useSocket = () => {
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
+    const onTokenInvalid = () => {
+      useAuthStore.getState().logout();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('auth:token-invalid', onTokenInvalid as EventListener);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('auth:token-invalid', onTokenInvalid as EventListener);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isAuthenticated) {
       disconnectSocket();
       return;
