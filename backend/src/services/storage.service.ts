@@ -63,7 +63,7 @@ async function cloudinaryUpload(
     throw Object.assign(
       new Error(
         isAuthOrConfigIssue
-          ? 'Cloudinary authentication failed. Verify CLOUDINARY credentials in deployment variables.'
+          ? `Cloudinary authentication failed. Verify CLOUDINARY credentials in deployment variables. Provider reason: ${reason}`
           : `Cloudinary upload failed: ${reason}`,
       ),
       {

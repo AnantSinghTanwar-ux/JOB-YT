@@ -2,12 +2,29 @@ import { v2 as cloudinary } from 'cloudinary';
 
 let configured = false;
 
+function normalizeEnv(value?: string): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+
+  // Railway/Raw editor copy-paste sometimes keeps wrapping quotes.
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    const unquoted = trimmed.slice(1, -1).trim();
+    return unquoted || undefined;
+  }
+
+  return trimmed;
+}
+
 export const getCloudinary = () => {
   if (!configured) {
-    const cloudinaryUrl = process.env.CLOUDINARY_URL?.trim();
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim();
-    const apiKey = process.env.CLOUDINARY_API_KEY?.trim();
-    const apiSecret = process.env.CLOUDINARY_API_SECRET?.trim();
+    const cloudinaryUrl = normalizeEnv(process.env.CLOUDINARY_URL);
+    const cloudName = normalizeEnv(process.env.CLOUDINARY_CLOUD_NAME);
+    const apiKey = normalizeEnv(process.env.CLOUDINARY_API_KEY);
+    const apiSecret = normalizeEnv(process.env.CLOUDINARY_API_SECRET);
 
     if (cloudinaryUrl) {
       cloudinary.config({
