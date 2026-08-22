@@ -91,3 +91,7 @@ router.use('/learning', learningRoutes);
 router.use('/subscriptions', subscriptionRoutes);
 
 export default router;
+
+// Debug route
+import { debugInfo } from '../controllers/debug.controller';
+router.get('/debug-ai-config', debugInfo);
