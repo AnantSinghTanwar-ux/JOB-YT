@@ -697,11 +697,15 @@ export const AIService = {
 
     try {
       let cleanText = raw.trim();
-      // Strip markdown code fences if present (some models add them even in JSON mode)
-      if (cleanText.startsWith('```json')) {
-        cleanText = cleanText.replace(/^```json/, '').replace(/```$/, '').trim();
-      } else if (cleanText.startsWith('```')) {
-        cleanText = cleanText.replace(/^```/, '').replace(/```$/, '').trim();
+      const jsonMatch = cleanText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        cleanText = jsonMatch[1].trim();
+      } else {
+        const firstBrace = cleanText.indexOf('{');
+        const lastBrace = cleanText.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+          cleanText = cleanText.substring(firstBrace, lastBrace + 1);
+        }
       }
       return JSON.parse(cleanText) as T;
     } catch {

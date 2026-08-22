@@ -380,19 +380,17 @@ export const InterviewService = {
         if (!responseText) {
           throw new Error('AI Service returned empty response');
         }
-        // Strip markdown backticks if any
+        // Robust JSON extraction
         let cleanText = responseText.trim();
-        if (cleanText.startsWith('```')) {
-          const lines = cleanText.split('\n');
-          if (lines[0].startsWith('```json')) {
-            lines.shift();
-          } else {
-            lines.shift();
+        const jsonMatch = cleanText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch) {
+          cleanText = jsonMatch[1].trim();
+        } else {
+          const firstBrace = cleanText.indexOf('{');
+          const lastBrace = cleanText.lastIndexOf('}');
+          if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+            cleanText = cleanText.substring(firstBrace, lastBrace + 1);
           }
-          if (lines[lines.length - 1] === '```') {
-            lines.pop();
-          }
-          cleanText = lines.join('\n').trim();
         }
 
         const parsed = JSON.parse(cleanText);
@@ -533,17 +531,15 @@ export const InterviewService = {
           throw new Error('AI Service returned empty response');
         }
         let cleanText = evalText.trim();
-        if (cleanText.startsWith('```')) {
-          const lines = cleanText.split('\n');
-          if (lines[0].startsWith('```json')) {
-            lines.shift();
-          } else {
-            lines.shift();
+        const jsonMatch = cleanText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch) {
+          cleanText = jsonMatch[1].trim();
+        } else {
+          const firstBrace = cleanText.indexOf('{');
+          const lastBrace = cleanText.lastIndexOf('}');
+          if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+            cleanText = cleanText.substring(firstBrace, lastBrace + 1);
           }
-          if (lines[lines.length - 1] === '```') {
-            lines.pop();
-          }
-          cleanText = lines.join('\n').trim();
         }
 
         const parsed = JSON.parse(cleanText);
@@ -706,17 +702,15 @@ export const InterviewService = {
           throw new Error('AI Service returned empty response');
         }
         let cleanText = responseText.trim();
-        if (cleanText.startsWith('```')) {
-          const lines = cleanText.split('\n');
-          if (lines[0].startsWith('```json')) {
-            lines.shift();
-          } else {
-            lines.shift();
+        const jsonMatch = cleanText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch) {
+          cleanText = jsonMatch[1].trim();
+        } else {
+          const firstBrace = cleanText.indexOf('{');
+          const lastBrace = cleanText.lastIndexOf('}');
+          if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+            cleanText = cleanText.substring(firstBrace, lastBrace + 1);
           }
-          if (lines[lines.length - 1] === '```') {
-            lines.pop();
-          }
-          cleanText = lines.join('\n').trim();
         }
 
         const parsed = JSON.parse(cleanText);
