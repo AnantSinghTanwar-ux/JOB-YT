@@ -152,7 +152,7 @@ function loadAIConfig(): AIConfig {
     embeddingDimensions,
     enableSemanticScoring: process.env.ENABLE_SEMANTIC_SCORING !== 'false',
     maxRetries: parseInt(process.env.AI_MAX_RETRIES || '2', 10),
-    timeoutMs: parseInt(process.env.AI_TIMEOUT_MS || '30000', 10),
+    timeoutMs: parseInt(process.env.AI_TIMEOUT_MS || '60000', 10),
     circuitBreakerThreshold: parseInt(process.env.AI_CIRCUIT_BREAKER_THRESHOLD || '5', 10),
     circuitBreakerCooldownMs: parseInt(process.env.AI_CIRCUIT_BREAKER_COOLDOWN_MS || '60000', 10),
     maxEmbeddingInputChars: 8000,
