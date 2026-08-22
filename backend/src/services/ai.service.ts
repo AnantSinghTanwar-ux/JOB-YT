@@ -555,7 +555,7 @@ export const AIService = {
                 temperature: options?.temperature ?? aiConfig.defaultTemperature,
                 responseMimeType: options?.responseMimeType,
               }),
-              aiConfig.timeoutMs > 0 ? Math.min(aiConfig.timeoutMs, 30000) : 30000,
+              aiConfig.timeoutMs > 0 ? Math.min(aiConfig.timeoutMs, 60000) : 60000,
             ),
           aiConfig.maxRetries,
           `generateText(${model})`,
