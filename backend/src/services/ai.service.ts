@@ -668,11 +668,12 @@ export const AIService = {
 
       return text;
     } else {
+      const errorDump = JSON.stringify(attempts);
       console.error(
         `${LOG_PREFIX} [Metrics] requestId=${requestId} success=false totalDurationMs=${totalDuration} ` +
-        `attempts=${JSON.stringify(attempts)}`
+        `attempts=${errorDump}`
       );
-      return null;
+      throw new Error(`All AI providers failed. Attempts: ${errorDump}`);
     }
   },
 
