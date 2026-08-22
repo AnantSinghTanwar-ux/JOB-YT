@@ -7,8 +7,8 @@ export const normalizeUrl = (url?: string | null): string | null => {
   const trimmed = url.trim();
   if (trimmed === '') return null;
   
-  // If it already starts with http:// or https://, return it as is
-  if (/^https?:\/\//i.test(trimmed)) {
+  // If it already starts with http://, https://, or is a local path (starts with /), return it as is
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('/')) {
     return trimmed;
   }
   
@@ -47,8 +47,8 @@ export const normalizeStoredAssetUrl = (url?: string | null): string | null => {
   const trimmed = url.trim();
   if (!trimmed) return null;
 
-  if (/^https?:\/\/uploads(?:[:/]|$)/i.test(trimmed)) {
-    const pathname = trimmed.replace(/^https?:\/\/uploads(?:[:/]|$)/i, '').replace(/^\/+/, '');
+  if (/^https?:\/+\/uploads(?:[:/]|$)/i.test(trimmed)) {
+    const pathname = trimmed.replace(/^https?:\/+\/uploads(?:[:/]|$)/i, '').replace(/^\/+/, '');
     return pathname ? `/uploads/${pathname}` : '/uploads';
   }
 
