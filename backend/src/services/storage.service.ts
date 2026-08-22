@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import { getCloudinary } from '../config/cloudinary';
+import { uploadToS3 } from '../utils/s3';
 
 export interface UploadResult {
   url: string;
@@ -10,6 +11,24 @@ export interface UploadResult {
 }
 
 const isPdf = (mimeType: string): boolean => mimeType === 'application/pdf';
+
+type StorageType = 'cloudinary' | 's3' | 'local';
+
+function getStorageType(): StorageType {
+  const configured = (process.env.STORAGE_TYPE || 'cloudinary').trim().toLowerCase();
+  if (configured === 's3' || configured === 'local' || configured === 'cloudinary') {
+    return configured;
+  }
+  return 'cloudinary';
+}
+
+function hasS3Config(): boolean {
+  return Boolean(
+    process.env.AWS_ACCESS_KEY_ID?.trim() &&
+      process.env.AWS_SECRET_ACCESS_KEY?.trim() &&
+      process.env.AWS_S3_BUCKET?.trim(),
+  );
+}
 
 const createTempFileFromBuffer = async (file: Express.Multer.File): Promise<string> => {
   const tmpDir = path.join(os.tmpdir(), 'hiring-platform-uploads');
@@ -82,6 +101,93 @@ async function cloudinaryUpload(
   }
 }
 
+async function s3Upload(
+  file: Express.Multer.File,
+  folder: string,
+): Promise<UploadResult> {
+  const url = await uploadToS3(file.buffer, file.originalname, file.mimetype, folder);
+  return {
+    url,
+    resourceType: 's3',
+  };
+}
+
+async function localUpload(
+  file: Express.Multer.File,
+  folder: string,
+): Promise<UploadResult> {
+  const uploadDir = path.join(__dirname, '../../uploads', folder);
+  await fs.mkdir(uploadDir, { recursive: true });
+
+    const safeName = path.basename(file.originalname).replace(/[^\w.\-]+/g, '_') || 'upload';
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
+  const filePath = path.join(uploadDir, fileName);
+  await fs.writeFile(filePath, file.buffer);
+
+  return {
+    url: `/uploads/${folder}/${fileName}`,
+    resourceType: 'local',
+  };
+}
+
+async function uploadWithFallbacks(
+  file: Express.Multer.File,
+  folder: string,
+): Promise<UploadResult> {
+  const storageType = getStorageType();
+
+  const uploadAttempts: Array<{
+    label: StorageType;
+    enabled: boolean;
+    run: () => Promise<UploadResult>;
+  }> = [
+    {
+      label: 'cloudinary',
+      enabled: storageType === 'cloudinary' || storageType === 's3',
+      run: () => cloudinaryUpload(file, folder),
+    },
+    {
+      label: 's3',
+      enabled: storageType === 's3' || storageType === 'cloudinary',
+      run: () => s3Upload(file, folder),
+    },
+    {
+      label: 'local',
+      enabled: true,
+      run: () => localUpload(file, folder),
+    },
+  ];
+
+  const errors: Array<{ provider: string; message: string }> = [];
+
+  for (const attempt of uploadAttempts) {
+    if (!attempt.enabled) continue;
+
+    if (attempt.label === 'cloudinary' && storageType === 'cloudinary' && !process.env.CLOUDINARY_CLOUD_NAME?.trim() && !process.env.CLOUDINARY_URL?.trim()) {
+      errors.push({ provider: attempt.label, message: 'Cloudinary environment variables are not configured' });
+      continue;
+    }
+
+    if (attempt.label === 's3' && !hasS3Config()) {
+      errors.push({ provider: attempt.label, message: 'AWS S3 environment variables are not configured' });
+      continue;
+    }
+
+    try {
+      return await attempt.run();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      errors.push({ provider: attempt.label, message });
+    }
+  }
+
+  throw Object.assign(new Error('All storage providers failed'), {
+    statusCode: 502,
+    code: 'STORAGE_UPLOAD_FAILED',
+    details: { storageType, errors },
+  });
+}
+
 const extractCloudinaryPublicId = (url: string): string | null => {
   if (!url.includes('res.cloudinary.com')) return null;
   const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+(?:\?.*)?$/);
@@ -100,16 +206,16 @@ async function deleteFromCloudinary(url: string): Promise<void> {
 
 export const StorageService = {
   async uploadResume(file: Express.Multer.File): Promise<UploadResult> {
-    return cloudinaryUpload(file, 'resumes');
+    return uploadWithFallbacks(file, 'resumes');
   },
 
   async uploadPhoto(file: Express.Multer.File, folder: string): Promise<UploadResult> {
-    return cloudinaryUpload(file, folder || 'profile-images');
+    return uploadWithFallbacks(file, folder || 'profile-images');
   },
 
   async uploadAny(file: Express.Multer.File): Promise<UploadResult> {
     const folder = isPdf(file.mimetype) ? 'resumes' : 'profile-images';
-    return cloudinaryUpload(file, folder);
+    return uploadWithFallbacks(file, folder);
   },
 
   async deleteByUrl(url: string): Promise<void> {
