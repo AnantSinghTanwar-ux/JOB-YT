@@ -372,6 +372,7 @@ export const InterviewService = {
 
     let attempts = 0;
     const maxAttempts = 2; // Initial attempt + 1 retry
+    let lastErrorMsg = 'Unknown AI error';
 
     while (attempts < maxAttempts) {
       attempts++;
@@ -397,13 +398,15 @@ export const InterviewService = {
         if (validateSchema(parsed)) {
           return parsed.questions;
         }
+        lastErrorMsg = 'Invalid schema response from AI';
         console.warn(`${LOG_PREFIX} Invalid schema response on attempt ${attempts}. Response: ${cleanText}`);
       } catch (err: any) {
+        lastErrorMsg = err.message;
         console.error(`${LOG_PREFIX} Error generating questions on attempt ${attempts}: ${err.message}`);
       }
     }
 
-    throw new AppError('Failed to generate valid mock interview questions from AI service after retries', 500, 'AI_GENERATION_FAILED');
+    throw new AppError(`Failed to generate valid mock interview questions: ${lastErrorMsg}`, 500, 'AI_GENERATION_FAILED');
   },
 
   /**
