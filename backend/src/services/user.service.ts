@@ -9,7 +9,7 @@ import { AppError } from '../utils/appError';
 import { UserRole } from '../types';
 import type { ParsedResume } from '../utils/resumeParser';
 
-import { normalizeUrl, normalizeLinkedInUrl } from '../utils/url';
+import { normalizeUrl, normalizeLinkedInUrl, normalizeStoredAssetUrl } from '../utils/url';
 
 const APPLICANT_PROFILE_FIELDS = new Set([
   'name',
@@ -109,8 +109,11 @@ export const UserService = {
       const profile = await ApplicantProfileModel.findByUserId(userId);
       const defaultResume = await ResumeModel.findDefaultByUserId(userId);
       const profileOut = profile
-        ? { ...profile, resume_url: defaultResume?.file_url ?? null }
+        ? { ...profile, resume_url: normalizeStoredAssetUrl(defaultResume?.file_url) ?? null }
         : null;
+      if (profileOut && profileOut.photo_url) {
+        profileOut.photo_url = normalizeStoredAssetUrl(profileOut.photo_url);
+      }
       const completeness = profile ? computeApplicantCompleteness(profile, user.email) : 0;
       const githubRepos: any[] = [];
       const projects: any[] = [];
@@ -132,6 +135,9 @@ export const UserService = {
       let profile = await RecruiterProfileModel.findByUserId(userId);
       if (!profile) {
         profile = await RecruiterProfileModel.create(userId);
+      }
+      if (profile.logo_url) {
+        profile.logo_url = normalizeStoredAssetUrl(profile.logo_url);
       }
       const completeness = computeRecruiterCompleteness(profile);
       return {
@@ -164,8 +170,12 @@ export const UserService = {
     if (Object.keys(patch).length === 0) {
       const user = await UserModel.findById(userId);
       const defaultResume = await ResumeModel.findDefaultByUserId(userId);
+      const profileOut = { ...profile, resume_url: normalizeStoredAssetUrl(defaultResume?.file_url) ?? null };
+      if (profileOut.photo_url) {
+        profileOut.photo_url = normalizeStoredAssetUrl(profileOut.photo_url);
+      }
       return {
-        profile: { ...profile, resume_url: defaultResume?.file_url ?? null },
+        profile: profileOut,
         completeness: computeApplicantCompleteness(profile, user?.email ?? null),
       };
     }
@@ -173,8 +183,12 @@ export const UserService = {
     const updated = await ApplicantProfileModel.update(userId, patch);
     const user = await UserModel.findById(userId);
     const defaultResume = await ResumeModel.findDefaultByUserId(userId);
+    const profileOut = { ...updated, resume_url: normalizeStoredAssetUrl(defaultResume?.file_url) ?? null };
+    if (profileOut.photo_url) {
+      profileOut.photo_url = normalizeStoredAssetUrl(profileOut.photo_url);
+    }
     return {
-      profile: { ...updated, resume_url: defaultResume?.file_url ?? null },
+      profile: profileOut,
       completeness: computeApplicantCompleteness(updated, user?.email ?? null),
     };
   },
@@ -192,10 +206,16 @@ export const UserService = {
     if (!profile) profile = await RecruiterProfileModel.create(userId);
 
     if (Object.keys(patch).length === 0) {
+      if (profile.logo_url) {
+        profile.logo_url = normalizeStoredAssetUrl(profile.logo_url);
+      }
       return { profile, completeness: computeRecruiterCompleteness(profile) };
     }
 
     const updated = await RecruiterProfileModel.update(userId, patch);
+    if (updated.logo_url) {
+      updated.logo_url = normalizeStoredAssetUrl(updated.logo_url);
+    }
     return { profile: updated, completeness: computeRecruiterCompleteness(updated) };
   },
 
@@ -314,7 +334,10 @@ export const UserService = {
       }
 
       const defaultResume = await ResumeModel.findDefaultByUserId(targetUserId);
-      const profileOut = { ...profile, resume_url: defaultResume?.file_url ?? null };
+      const profileOut = { ...profile, resume_url: normalizeStoredAssetUrl(defaultResume?.file_url) ?? null };
+      if (profileOut.photo_url) {
+        profileOut.photo_url = normalizeStoredAssetUrl(profileOut.photo_url);
+      }
       const githubRepos: any[] = [];
       const projects: any[] = [];
       const certifications: any[] = [];
@@ -330,6 +353,9 @@ export const UserService = {
     }
     if (user.role === 'recruiter') {
       const profile = await RecruiterProfileModel.findByUserId(targetUserId);
+      if (profile?.logo_url) {
+        profile.logo_url = normalizeStoredAssetUrl(profile.logo_url);
+      }
       return { id: user.id, email: user.email, role: user.role, profile };
     }
     return { id: user.id, role: user.role };
