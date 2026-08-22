@@ -36,3 +36,30 @@ export const normalizeLinkedInUrl = (url?: string | null): string | null => {
   return normalized;
 };
 
+/**
+ * Normalizes stored asset URLs so old malformed upload values still render.
+ * - `uploads/...` -> `/uploads/...`
+ * - `https://uploads/...` -> `/uploads/...`
+ * - other absolute URLs are returned as-is
+ */
+export const normalizeStoredAssetUrl = (url?: string | null): string | null => {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  if (/^https?:\/\/uploads(?:[:/]|$)/i.test(trimmed)) {
+    const pathname = trimmed.replace(/^https?:\/\/uploads(?:[:/]|$)/i, '').replace(/^\/+/, '');
+    return pathname ? `/uploads/${pathname}` : '/uploads';
+  }
+
+  if (trimmed.startsWith('uploads/')) {
+    return `/${trimmed}`;
+  }
+
+  if (trimmed.startsWith('/uploads/')) {
+    return trimmed;
+  }
+
+  return trimmed;
+};
+
