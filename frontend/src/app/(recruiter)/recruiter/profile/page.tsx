@@ -6,6 +6,7 @@ import { api, ApiError } from '@/lib/api';
 import { API_BASE } from '@/constants';
 import { Spinner } from '@/components/ui';
 import { Notification as AppNotification } from '@/types';
+import { resolveAssetUrl } from '@/lib/assetUrl';
 
 interface RecruiterProfileForm {
   name: string;
@@ -35,13 +36,6 @@ const emptyForm: RecruiterProfileForm = {
   description: '',
 };
 
-const toAbsoluteUrl = (url?: string | null): string | null => {
-  if (!url) return null;
-  if (/^https?:\/\//i.test(url)) return url;
-  const origin = API_BASE.replace(/\/api\/v1\/?$/, '');
-  return url.startsWith('/') ? `${origin}${url}` : `${origin}/${url}`;
-};
-
 export default function RecruiterProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -67,7 +61,7 @@ export default function RecruiterProfilePage() {
 
         setEmail(payload.email ?? '');
         setCompleteness(payload.completeness ?? 0);
-        setLogoUrl(toAbsoluteUrl(profile.logo_url));
+        setLogoUrl(resolveAssetUrl(profile.logo_url));
         setForm({
           name: profile.name ?? '',
           companyName: profile.companyName ?? '',
@@ -152,7 +146,7 @@ export default function RecruiterProfilePage() {
 
       await api.put('/users/me', { logo_url: uploadedUrl });
 
-      const nextUrl = toAbsoluteUrl(uploadedUrl);
+      const nextUrl = resolveAssetUrl(uploadedUrl);
       setLogoUrl(nextUrl);
       toast.success('Logo updated');
     } catch (err) {

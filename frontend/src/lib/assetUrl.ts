@@ -7,7 +7,12 @@ import { API_BASE } from '@/constants';
  */
 export const resolveAssetUrl = (url?: string | null): string | null => {
   if (!url) return null;
-  if (/^https?:\/\//i.test(url)) return url;
   const origin = API_BASE.replace(/\/api\/v1\/?$/, '');
-  return url.startsWith('/') ? `${origin}${url}` : `${origin}/${url}`;
+  if (/^https?:\/\/uploads(?:[:/]|$)/i.test(url)) {
+    const pathname = url.replace(/^https?:\/\/uploads(?:[:/]|$)/i, '').replace(/^\/+/, '');
+    return `${origin}/${pathname}`;
+  }
+  if (/^https?:\/\//i.test(url)) return url;
+  const normalized = url.replace(/^\/+/, '');
+  return `${origin}/${normalized}`;
 };
