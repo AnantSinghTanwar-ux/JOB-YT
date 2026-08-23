@@ -116,7 +116,7 @@ async function getFileContent(slug: string, filename: string): Promise<{ content
 
   // NOTE: The repository transferred ownership from kamranahmedse to nilbuild.
   // raw.githubusercontent.com does NOT redirect, so we must use the new owner.
-  const url = `https://raw.githubusercontent.com/nilbuild/developer-roadmap/master/src/data/roadmaps/${slug}/${filename}`;
+  const url = `https://raw.githubusercontent.com/kamranahmedse/developer-roadmap/6f745dc1eaa9d6a9841fe964be33835263f0fd92/src/data/roadmaps/${slug}/${filename}`;
   const content = await fetchWithRetry(url, 2, 10000);
   return { content, source: 'github' };
 }
