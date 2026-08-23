@@ -134,7 +134,8 @@ function RoadmapGraphInner() {
     );
 
     const rfNodes: Node[] = data.nodes.map((n) => {
-      const isJunk = JUNK_TYPES.has(n.type) || n.title === 'horizontal node' || n.title === 'vertical node';
+      const normTitle = n.title.toLowerCase().replace(/[-_ ]/g, '');
+      const isJunk = JUNK_TYPES.has(n.type) || normTitle === 'horizontalnode' || normTitle === 'verticalnode';
       const screenX = n.position_x;
       const screenY = n.position_y;
 
@@ -236,7 +237,8 @@ function RoadmapGraphInner() {
     const JUNK_TYPES = new Set(['horizontal', 'vertical', 'label', 'paragraph', 'legend', 'straight', 'step', 'simplebezier', 'button', 'linksgroup']);
     
     return data.nodes.filter((node) => {
-      const isJunk = JUNK_TYPES.has(node.type) || node.title === 'horizontal node' || node.title === 'vertical node';
+      const normTitle = node.title.toLowerCase().replace(/[-_ ]/g, '');
+      const isJunk = JUNK_TYPES.has(node.type) || normTitle === 'horizontalnode' || normTitle === 'verticalnode';
       if (isJunk) return false;
 
       const isDone = completedIds.has(node.id);

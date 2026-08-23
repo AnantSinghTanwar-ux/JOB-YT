@@ -274,12 +274,13 @@ export default function CoachChatbotPage({ params }: { params: Promise<{ id: str
                         : 'bg-white text-slate-800 border border-slate-200'
                     }`}
                   >
-                    <ReactMarkdown 
-                      remarkPlugins={[remarkGfm]}
-                      className="prose prose-sm prose-slate max-w-none"
-                    >
-                      {msg.message_text}
-                    </ReactMarkdown>
+                    <div className="prose prose-sm prose-slate max-w-none">
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                      >
+                        {msg.message_text}
+                      </ReactMarkdown>
+                    </div>
                   </div>
 
                   {/* Message timestamp and feedback controls */}
