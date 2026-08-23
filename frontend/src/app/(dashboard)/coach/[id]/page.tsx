@@ -18,7 +18,8 @@ import {
   FaLock,
 } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 interface CoachSession {
   id: string;
   student_id: string;
@@ -273,7 +274,12 @@ export default function CoachChatbotPage({ params }: { params: Promise<{ id: str
                         : 'bg-white text-slate-800 border border-slate-200'
                     }`}
                   >
-                    {msg.message_text}
+                    <ReactMarkdown 
+                      remarkPlugins={[remarkGfm]}
+                      className="prose prose-sm prose-slate max-w-none"
+                    >
+                      {msg.message_text}
+                    </ReactMarkdown>
                   </div>
 
                   {/* Message timestamp and feedback controls */}
