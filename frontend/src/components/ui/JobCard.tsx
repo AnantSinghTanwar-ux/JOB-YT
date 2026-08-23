@@ -182,23 +182,30 @@ export function JobCard({
     job,
     index,
     cardH,
-    onTagsHeight,
+    onContentHeight,
 }: {
     job: BackendJob;
     index: number;
     cardH: number;
-    onTagsHeight: (h: number) => void;
+    onContentHeight: (h: number) => void;
 }) {
     const tagsRef = useRef<HTMLDivElement>(null);
+    const topContentRef = useRef<HTMLDivElement>(null);
+    const [dynamicTopContentH, setDynamicTopContentH] = useState(TOP_CONTENT_H);
 
     useEffect(() => {
-        if (!tagsRef.current) return;
-        const measure = () => onTagsHeight(tagsRef.current?.offsetHeight ?? 0);
+        if (!tagsRef.current || !topContentRef.current) return;
+        const measure = () => {
+            const topH = 14 + (topContentRef.current?.offsetHeight ?? (TOP_CONTENT_H - 14));
+            setDynamicTopContentH(topH);
+            onContentHeight(topH + TAGS_PAD_TOP + (tagsRef.current?.offsetHeight ?? 0) + TAGS_PAD_BOT);
+        };
         measure();
         const ro = new ResizeObserver(measure);
         ro.observe(tagsRef.current);
+        ro.observe(topContentRef.current);
         return () => ro.disconnect();
-    }, [onTagsHeight]);
+    }, [onContentHeight]);
 
     const isRemote = job.type === 'remote' || (job.location?.toLowerCase().includes('remote') ?? false);
     const badgeText = getBadgeText(job);
@@ -218,7 +225,7 @@ export function JobCard({
     const whiteH = cardH - FOOTER_H;
     const beigePath = buildBeigePath(cardH);
     const whitePath = buildWhitePath(whiteH);
-    const tagsTop = TOP_CONTENT_H + TAGS_PAD_TOP;
+    const tagsTop = dynamicTopContentH + TAGS_PAD_TOP;
 
     return (
         <div
@@ -275,6 +282,7 @@ export function JobCard({
             </svg>
 
             <div
+                ref={topContentRef}
                 style={{
                     position: 'absolute', left: 16, top: 14,
                     width: 192, zIndex: 6,
@@ -516,15 +524,15 @@ export function SkeletonCard({ index }: { index: number }) {
 }
 
 export function JobCardGrid({ jobs, gridClass }: { jobs: BackendJob[], gridClass?: string }) {
-    const [tagsHeights, setTagsHeights] = useState<Record<string, number>>({});
-    const handleTagsHeight = useCallback((id: string, h: number) => {
-        setTagsHeights((prev) => (prev[id] === h ? prev : { ...prev, [id]: h }));
+    const [contentHeights, setContentHeights] = useState<Record<string, number>>({});
+    const handleContentHeight = useCallback((id: string, h: number) => {
+        setContentHeights((prev) => (prev[id] === h ? prev : { ...prev, [id]: h }));
     }, []);
 
     const uniformCardH = Math.max(
         BASE_CARD_H,
-        ...Object.values(tagsHeights).map(
-            (h) => TOP_CONTENT_H + TAGS_PAD_TOP + h + TAGS_PAD_BOT + FOOTER_H
+        ...Object.values(contentHeights).map(
+            (h) => h + FOOTER_H
         )
     );
 
@@ -536,7 +544,7 @@ export function JobCardGrid({ jobs, gridClass }: { jobs: BackendJob[], gridClass
                     job={job}
                     index={i}
                     cardH={uniformCardH}
-                    onTagsHeight={(h) => handleTagsHeight(job.id, h)}
+                    onContentHeight={(h) => handleContentHeight(job.id, h)}
                 />
             ))}
         </div>
