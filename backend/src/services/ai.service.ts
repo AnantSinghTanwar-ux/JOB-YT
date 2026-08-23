@@ -384,7 +384,8 @@ function getFallbackChain(): Record<string, string[]> {
     }
   }
   return {
-    claude: ['openai'],
+    claude: ['openai', 'groq'],
+    openai: ['groq'],
   };
 }
 
