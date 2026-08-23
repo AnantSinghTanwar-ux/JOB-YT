@@ -1,0 +1,743 @@
+[
+  {
+    "title": "Two Sum",
+    "slug": "two-sum",
+    "description": "Given an array of integers nums and an integer target, return the indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution.",
+    "constraints": "- 2 <= nums.length <= 10^4\n- Each input has exactly one solution",
+    "hints": [
+      "Use a hash map to store complements"
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "4\n2 7 11 15\n9",
+        "expected_output": "0 1",
+        "explanation": "nums[0] + nums[1] = 2 + 7 = 9"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "3\n3 2 4\n6",
+        "expected_output": "1 2"
+      },
+      {
+        "input": "2\n3 3\n6",
+        "expected_output": "0 1"
+      }
+    ]
+  },
+  {
+    "title": "Reverse String",
+    "slug": "reverse-string",
+    "description": "Write a function that reverses a string. The input string is given as an array of characters s.",
+    "constraints": "- 1 <= s.length <= 10^5",
+    "hints": [
+      "Use two pointers"
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "hello",
+        "expected_output": "olleh"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "world",
+        "expected_output": "dlrow"
+      },
+      {
+        "input": "abc",
+        "expected_output": "cba"
+      }
+    ]
+  },
+  {
+    "title": "FizzBuzz",
+    "slug": "fizzbuzz",
+    "description": "Given an integer n, return a string array answer where:\n- answer[i] == \"FizzBuzz\" if i is divisible by 3 and 5\n- answer[i] == \"Fizz\" if i is divisible by 3\n- answer[i] == \"Buzz\" if i is divisible by 5\n- answer[i] == i (as a string) otherwise",
+    "constraints": "- 1 <= n <= 10^4",
+    "hints": [
+      "Check divisibility in order: 15, 3, 5"
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "5",
+        "expected_output": "1\n2\nFizz\n4\nBuzz"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "3",
+        "expected_output": "1\n2\nFizz"
+      },
+      {
+        "input": "15",
+        "expected_output": "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+      }
+    ]
+  },
+  {
+    "title": "Palindrome Number",
+    "slug": "palindrome-number",
+    "description": "Given an integer x, return true if x is a palindrome, and false otherwise.",
+    "constraints": "- -2^31 <= x <= 2^31 - 1",
+    "hints": [
+      "Convert the number to a string, or reverse the integer mathematically."
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "121",
+        "expected_output": "true"
+      },
+      {
+        "input": "-121",
+        "expected_output": "false"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "10",
+        "expected_output": "false"
+      },
+      {
+        "input": "0",
+        "expected_output": "true"
+      }
+    ]
+  },
+  {
+    "title": "Valid Parentheses",
+    "slug": "valid-parentheses",
+    "description": "Given a string s containing just the characters \"(\", \")\", \"{\", \"}\", \"[\" and \"]\", determine if the input string is valid.\nAn input string is valid if open brackets are closed by the same type of brackets and in the correct order.",
+    "constraints": "- 1 <= s.length <= 10^4\n- s consists of parentheses only",
+    "hints": [
+      "Use a stack to keep track of opening brackets."
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "()",
+        "expected_output": "true"
+      },
+      {
+        "input": "()[]{}",
+        "expected_output": "true"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "(]",
+        "expected_output": "false"
+      },
+      {
+        "input": "([)]",
+        "expected_output": "false"
+      }
+    ]
+  },
+  {
+    "title": "Merge Two Sorted Lists",
+    "slug": "merge-two-sorted-lists",
+    "description": "You are given the heads of two sorted linked lists list1 and list2. Merge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists.",
+    "constraints": "- The number of nodes in both lists is in the range [0, 50].",
+    "hints": [
+      "Use a dummy node and iterate through both lists."
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "1 2 4\n1 3 4",
+        "expected_output": "1 1 2 3 4 4"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "\n0",
+        "expected_output": "0"
+      },
+      {
+        "input": "\n",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "title": "Best Time to Buy and Sell Stock",
+    "slug": "best-time-to-buy-and-sell-stock",
+    "description": "You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.",
+    "constraints": "- 1 <= prices.length <= 10^5",
+    "hints": [
+      "Keep track of the minimum price seen so far."
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "7 1 5 3 6 4",
+        "expected_output": "5"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "7 6 4 3 1",
+        "expected_output": "0"
+      }
+    ]
+  },
+  {
+    "title": "Climbing Stairs",
+    "slug": "climbing-stairs",
+    "description": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+    "constraints": "- 1 <= n <= 45",
+    "hints": [
+      "Use dynamic programming. The answer is the nth Fibonacci number."
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "2",
+        "expected_output": "2"
+      },
+      {
+        "input": "3",
+        "expected_output": "3"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "4",
+        "expected_output": "5"
+      },
+      {
+        "input": "5",
+        "expected_output": "8"
+      }
+    ]
+  },
+  {
+    "title": "Maximum Subarray",
+    "slug": "maximum-subarray",
+    "description": "Given an integer array nums, find the subarray which has the largest sum and return its sum.",
+    "constraints": "- 1 <= nums.length <= 10^5",
+    "hints": [
+      "Use Kadane's algorithm."
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "-2 1 -3 4 -1 2 1 -5 4",
+        "expected_output": "6"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1",
+        "expected_output": "1"
+      },
+      {
+        "input": "5 4 -1 7 8",
+        "expected_output": "23"
+      }
+    ]
+  },
+  {
+    "title": "Search Insert Position",
+    "slug": "search-insert-position",
+    "description": "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.",
+    "constraints": "- 1 <= nums.length <= 10^4",
+    "hints": [
+      "Use binary search."
+    ],
+    "difficulty": "easy",
+    "samples": [
+      {
+        "input": "1 3 5 6\n5",
+        "expected_output": "2"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1 3 5 6\n2",
+        "expected_output": "1"
+      },
+      {
+        "input": "1 3 5 6\n7",
+        "expected_output": "4"
+      }
+    ]
+  },
+  {
+    "title": "Add Two Numbers",
+    "slug": "add-two-numbers",
+    "description": "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.",
+    "constraints": "- The number of nodes in each linked list is in the range [1, 100].",
+    "hints": [
+      "Iterate through the lists, keeping track of the carry."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "2 4 3\n5 6 4",
+        "expected_output": "7 0 8"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "0\n0",
+        "expected_output": "0"
+      },
+      {
+        "input": "9 9 9 9 9 9 9\n9 9 9 9",
+        "expected_output": "8 9 9 9 0 0 0 1"
+      }
+    ]
+  },
+  {
+    "title": "Longest Substring Without Repeating Characters",
+    "slug": "longest-substring-without-repeating-characters",
+    "description": "Given a string s, find the length of the longest substring without repeating characters.",
+    "constraints": "- 0 <= s.length <= 5 * 10^4",
+    "hints": [
+      "Use a sliding window and a hash set."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "abcabcbb",
+        "expected_output": "3"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "bbbbb",
+        "expected_output": "1"
+      },
+      {
+        "input": "pwwkew",
+        "expected_output": "3"
+      }
+    ]
+  },
+  {
+    "title": "Container With Most Water",
+    "slug": "container-with-most-water",
+    "description": "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]). Find two lines that together with the x-axis form a container, such that the container contains the most water.",
+    "constraints": "- n == height.length, 2 <= n <= 10^5",
+    "hints": [
+      "Use two pointers, starting from the ends."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "1 8 6 2 5 4 8 3 7",
+        "expected_output": "49"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1 1",
+        "expected_output": "1"
+      }
+    ]
+  },
+  {
+    "title": "3Sum",
+    "slug": "3sum",
+    "description": "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.",
+    "constraints": "- 3 <= nums.length <= 3000",
+    "hints": [
+      "Sort the array and use two pointers for the remaining sum."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "-1 0 1 2 -1 -4",
+        "expected_output": "-1 -1 2\n-1 0 1"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "0 1 1",
+        "expected_output": ""
+      },
+      {
+        "input": "0 0 0",
+        "expected_output": "0 0 0"
+      }
+    ]
+  },
+  {
+    "title": "Letter Combinations of a Phone Number",
+    "slug": "letter-combinations-of-a-phone-number",
+    "description": "Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order.",
+    "constraints": "- 0 <= digits.length <= 4",
+    "hints": [
+      "Use backtracking or BFS to generate combinations."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "23",
+        "expected_output": "ad ae af bd be bf cd ce cf"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "",
+        "expected_output": ""
+      },
+      {
+        "input": "2",
+        "expected_output": "a b c"
+      }
+    ]
+  },
+  {
+    "title": "Generate Parentheses",
+    "slug": "generate-parentheses",
+    "description": "Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.",
+    "constraints": "- 1 <= n <= 8",
+    "hints": [
+      "Use backtracking. Keep track of open and closed counts."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "3",
+        "expected_output": "((())) (()()) (())() ()(()) ()()()"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1",
+        "expected_output": "()"
+      }
+    ]
+  },
+  {
+    "title": "Search in Rotated Sorted Array",
+    "slug": "search-in-rotated-sorted-array",
+    "description": "There is an integer array nums sorted in ascending order (with distinct values). Prior to being passed to your function, nums is possibly rotated. Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums.",
+    "constraints": "- 1 <= nums.length <= 5000",
+    "hints": [
+      "Use binary search. Determine which half is sorted."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "4 5 6 7 0 1 2\n0",
+        "expected_output": "4"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "4 5 6 7 0 1 2\n3",
+        "expected_output": "-1"
+      },
+      {
+        "input": "1\n0",
+        "expected_output": "-1"
+      }
+    ]
+  },
+  {
+    "title": "Combination Sum",
+    "slug": "combination-sum",
+    "description": "Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target.",
+    "constraints": "- 1 <= candidates.length <= 30",
+    "hints": [
+      "Use backtracking."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "2 3 6 7\n7",
+        "expected_output": "2 2 3\n7"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "2 3 5\n8",
+        "expected_output": "2 2 2 2\n2 3 3\n3 5"
+      }
+    ]
+  },
+  {
+    "title": "Permutations",
+    "slug": "permutations",
+    "description": "Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.",
+    "constraints": "- 1 <= nums.length <= 6",
+    "hints": [
+      "Use backtracking."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "1 2 3",
+        "expected_output": "1 2 3\n1 3 2\n2 1 3\n2 3 1\n3 1 2\n3 2 1"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "0 1",
+        "expected_output": "0 1\n1 0"
+      }
+    ]
+  },
+  {
+    "title": "Merge Intervals",
+    "slug": "merge-intervals",
+    "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
+    "constraints": "- 1 <= intervals.length <= 10^4",
+    "hints": [
+      "Sort the intervals by start time."
+    ],
+    "difficulty": "medium",
+    "samples": [
+      {
+        "input": "1 3\n2 6\n8 10\n15 18",
+        "expected_output": "1 6\n8 10\n15 18"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1 4\n4 5",
+        "expected_output": "1 5"
+      }
+    ]
+  },
+  {
+    "title": "Median of Two Sorted Arrays",
+    "slug": "median-of-two-sorted-arrays",
+    "description": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).",
+    "constraints": "- nums1.length == m, nums2.length == n",
+    "hints": [
+      "Use binary search on the smaller array to partition."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "1 3\n2",
+        "expected_output": "2.00000"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1 2\n3 4",
+        "expected_output": "2.50000"
+      }
+    ]
+  },
+  {
+    "title": "Regular Expression Matching",
+    "slug": "regular-expression-matching",
+    "description": "Given an input string s and a pattern p, implement regular expression matching with support for \".\" and \"*\" where \".\" Matches any single character and \"*\" Matches zero or more of the preceding element.",
+    "constraints": "- 1 <= s.length <= 20",
+    "hints": [
+      "Use dynamic programming."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "aa\na",
+        "expected_output": "false"
+      },
+      {
+        "input": "aa\na*",
+        "expected_output": "true"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "ab\n.*",
+        "expected_output": "true"
+      }
+    ]
+  },
+  {
+    "title": "Merge k Sorted Lists",
+    "slug": "merge-k-sorted-lists",
+    "description": "You are given an array of k linked-lists lists, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
+    "constraints": "- 0 <= k <= 10^4",
+    "hints": [
+      "Use a min-heap or divide and conquer."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "1 4 5\n1 3 4\n2 6",
+        "expected_output": "1 1 2 3 4 4 5 6"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "title": "Reverse Nodes in k-Group",
+    "slug": "reverse-nodes-in-k-group",
+    "description": "Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list.",
+    "constraints": "- The number of nodes in the list is n, 1 <= k <= n <= 5000",
+    "hints": [
+      "Reverse sub-lists iteratively or recursively."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "1 2 3 4 5\n2",
+        "expected_output": "2 1 4 3 5"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1 2 3 4 5\n3",
+        "expected_output": "3 2 1 4 5"
+      }
+    ]
+  },
+  {
+    "title": "Trapping Rain Water",
+    "slug": "trapping-rain-water",
+    "description": "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    "constraints": "- n == height.length, 1 <= n <= 2 * 10^4",
+    "hints": [
+      "Use two pointers or dynamic programming."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "0 1 0 2 1 0 1 3 2 1 2 1",
+        "expected_output": "6"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "4 2 0 3 2 5",
+        "expected_output": "9"
+      }
+    ]
+  },
+  {
+    "title": "First Missing Positive",
+    "slug": "first-missing-positive",
+    "description": "Given an unsorted integer array nums. Return the smallest positive integer that is not present in nums. You must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space.",
+    "constraints": "- 1 <= nums.length <= 10^5",
+    "hints": [
+      "Place each number in its right place (nums[i] at index nums[i]-1)."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "1 2 0",
+        "expected_output": "3"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "3 4 -1 1",
+        "expected_output": "2"
+      },
+      {
+        "input": "7 8 9 11 12",
+        "expected_output": "1"
+      }
+    ]
+  },
+  {
+    "title": "Wildcard Matching",
+    "slug": "wildcard-matching",
+    "description": "Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for \"?\" and \"*\" where \"?\" matches any single character and \"*\" matches any sequence of characters (including the empty sequence).",
+    "constraints": "- 0 <= s.length, p.length <= 2000",
+    "hints": [
+      "Use dynamic programming."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "aa\na",
+        "expected_output": "false"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "aa\n*",
+        "expected_output": "true"
+      },
+      {
+        "input": "cb\n?a",
+        "expected_output": "false"
+      }
+    ]
+  },
+  {
+    "title": "N-Queens",
+    "slug": "n-queens",
+    "description": "The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other. Given an integer n, return all distinct solutions to the n-queens puzzle.",
+    "constraints": "- 1 <= n <= 9",
+    "hints": [
+      "Use backtracking."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "4",
+        "expected_output": ".Q..\n...\nQ...\n..Q.\n\n..Q.\nQ...\n...Q\n.Q.."
+      }
+    ],
+    "hidden": [
+      {
+        "input": "1",
+        "expected_output": "Q"
+      }
+    ]
+  },
+  {
+    "title": "Word Ladder",
+    "slug": "word-ladder",
+    "description": "A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s1 -> s2 -> ... -> sk such that every adjacent pair of words differs by a single letter. Given two words, beginWord and endWord, and a dictionary wordList, return the number of words in the shortest transformation sequence from beginWord to endWord, or 0 if no such sequence exists.",
+    "constraints": "- 1 <= beginWord.length <= 10",
+    "hints": [
+      "Use Breadth-First Search (BFS)."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "hit cog\nhot dot dog lot log cog",
+        "expected_output": "5"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "hit cog\nhot dot dog lot log",
+        "expected_output": "0"
+      }
+    ]
+  },
+  {
+    "title": "Edit Distance",
+    "slug": "edit-distance",
+    "description": "Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2. You have the following three operations permitted on a word: Insert a character, Delete a character, Replace a character.",
+    "constraints": "- 0 <= word1.length, word2.length <= 500",
+    "hints": [
+      "Use dynamic programming."
+    ],
+    "difficulty": "hard",
+    "samples": [
+      {
+        "input": "horse ros",
+        "expected_output": "3"
+      }
+    ],
+    "hidden": [
+      {
+        "input": "intention execution",
+        "expected_output": "5"
+      }
+    ]
+  }
+]

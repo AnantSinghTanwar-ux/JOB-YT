@@ -21,53 +21,7 @@ async function seed() {
     return;
   }
 
-  const problems = [
-    {
-      title: 'Two Sum',
-      slug: 'two-sum',
-      description: 'Given an array of integers nums and an integer target, return the indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution.',
-      constraints: '- 2 <= nums.length <= 10^4\n- Each input has exactly one solution',
-      hints: ['Use a hash map to store complements'],
-      difficulty: 'easy',
-      samples: [
-        { input: '4\n2 7 11 15\n9', expected_output: '0 1', explanation: 'nums[0] + nums[1] = 2 + 7 = 9' },
-      ],
-      hidden: [
-        { input: '3\n3 2 4\n6', expected_output: '1 2' },
-        { input: '2\n3 3\n6', expected_output: '0 1' },
-      ],
-    },
-    {
-      title: 'Reverse String',
-      slug: 'reverse-string',
-      description: 'Write a function that reverses a string. The input string is given as an array of characters s.',
-      constraints: '- 1 <= s.length <= 10^5',
-      hints: ['Use two pointers'],
-      difficulty: 'easy',
-      samples: [
-        { input: 'hello', expected_output: 'olleh' },
-      ],
-      hidden: [
-        { input: 'world', expected_output: 'dlrow' },
-        { input: 'abc', expected_output: 'cba' },
-      ],
-    },
-    {
-      title: 'FizzBuzz',
-      slug: 'fizzbuzz',
-      description: 'Given an integer n, return a string array answer where:\n- answer[i] == "FizzBuzz" if i is divisible by 3 and 5\n- answer[i] == "Fizz" if i is divisible by 3\n- answer[i] == "Buzz" if i is divisible by 5\n- answer[i] == i (as a string) otherwise',
-      constraints: '- 1 <= n <= 10^4',
-      hints: ['Check divisibility in order: 15, 3, 5'],
-      difficulty: 'easy',
-      samples: [
-        { input: '5', expected_output: '1\n2\nFizz\n4\nBuzz' },
-      ],
-      hidden: [
-        { input: '3', expected_output: '1\n2\nFizz' },
-        { input: '15', expected_output: '1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz' },
-      ],
-    },
-  ];
+  const problems = require('./data/problems.json');
 
   for (const p of problems) {
     const existing = await pool.query(
