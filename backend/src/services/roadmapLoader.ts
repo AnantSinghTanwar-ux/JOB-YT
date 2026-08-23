@@ -101,6 +101,14 @@ async function fetchWithRetry(url: string, maxRetries = 3, timeoutMs = 15000): P
 // ─── Source Resolvers ─────────────────────────────────────────────────────────
 
 async function getFileContent(slug: string, filename: string): Promise<{ content: string; source: 'local' | 'github' }> {
+  // First try the bundled fallback roadmaps directly in the repository
+  try {
+    const bundledPath = path.join(__dirname, '../scripts/data/roadmaps', slug, filename);
+    const content = await fs.readFile(bundledPath, 'utf8');
+    return { content, source: 'local' };
+  } catch {
+    // If not bundled, try explicit local repo path
+  }
   const localRepo = process.env.ROADMAP_LOCAL_REPO_PATH;
 
   if (localRepo) {
