@@ -123,18 +123,10 @@ function RoadmapGraphInner() {
   const { nodes, edges } = useMemo(() => {
     if (!data) return { nodes: [], edges: [] };
 
-    // Group nodes by Y level from database
-    const levelMap = new Map<number, typeof data.nodes>();
-    data.nodes.forEach((n) => {
-      const g = levelMap.get(n.position_y) || [];
-      g.push(n);
-      levelMap.set(n.position_y, g);
-    });
+    const JUNK_TYPES = new Set(['horizontal', 'vertical', 'label', 'paragraph', 'legend', 'straight', 'step', 'simplebezier', 'button', 'linksgroup']);
 
     const NODE_WIDTH = 180;
     const NODE_HEIGHT = 50;
-    const GAP_X = 40;
-    const GAP_Y = 80;
 
     const completedSet = new Set(progress?.completedNodes.map((n) => n.id) || []);
     const recommendedSet = new Set(
@@ -142,15 +134,9 @@ function RoadmapGraphInner() {
     );
 
     const rfNodes: Node[] = data.nodes.map((n) => {
-      const levelNodes = levelMap.get(n.position_y) || [];
-      levelNodes.sort((a, b) => a.position_x - b.position_x);
-
-      const indexInLevel = levelNodes.findIndex((ln) => ln.id === n.id);
-      const totalWidth = levelNodes.length * NODE_WIDTH + (levelNodes.length - 1) * GAP_X;
-      const startX = -totalWidth / 2 + NODE_WIDTH / 2;
-
-      const screenX = startX + indexInLevel * (NODE_WIDTH + GAP_X);
-      const screenY = (n.position_y / 100) * (NODE_HEIGHT + GAP_Y);
+      const isJunk = JUNK_TYPES.has(n.type) || n.title === 'horizontal node' || n.title === 'vertical node';
+      const screenX = n.position_x;
+      const screenY = n.position_y;
 
       const isCompleted = completedSet.has(n.id);
       const isRecommended = recommendedSet.has(n.id);
@@ -172,24 +158,34 @@ function RoadmapGraphInner() {
       return {
         id: n.id,
         position: { x: screenX, y: screenY },
-        data: { label: isCompleted ? `✓ ${n.title}` : n.title },
+        data: { label: isJunk ? '' : (isCompleted ? `✓ ${n.title}` : n.title) },
         type: n.type === 'root' ? 'input' : 'default',
         sourcePosition: Position.Bottom,
         targetPosition: Position.Top,
-        style: {
-          background,
-          color,
-          border,
-          borderRadius: '12px',
-          fontWeight: '700',
-          fontSize: '11px',
-          padding: '12px 10px',
-          width: NODE_WIDTH,
-          textAlign: 'center',
-          boxShadow: isRecommended
-            ? '0 0 18px 0px rgba(245, 158, 11, 0.45)'
-            : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-        },
+        style: isJunk
+          ? {
+              opacity: 0,
+              pointerEvents: 'none',
+              width: 1,
+              height: 1,
+              padding: 0,
+              border: 'none',
+              background: 'transparent'
+            }
+          : {
+              background,
+              color,
+              border,
+              borderRadius: '12px',
+              fontWeight: '700',
+              fontSize: '11px',
+              padding: '12px 10px',
+              width: NODE_WIDTH,
+              textAlign: 'center',
+              boxShadow: isRecommended
+                ? '0 0 18px 0px rgba(245, 158, 11, 0.45)'
+                : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            },
       };
     });
 
@@ -237,7 +233,12 @@ function RoadmapGraphInner() {
   // Filter topics for list pane
   const filteredTopics = useMemo(() => {
     if (!data) return [];
+    const JUNK_TYPES = new Set(['horizontal', 'vertical', 'label', 'paragraph', 'legend', 'straight', 'step', 'simplebezier', 'button', 'linksgroup']);
+    
     return data.nodes.filter((node) => {
+      const isJunk = JUNK_TYPES.has(node.type) || node.title === 'horizontal node' || node.title === 'vertical node';
+      if (isJunk) return false;
+
       const isDone = completedIds.has(node.id);
       if (filter === 'completed') return isDone;
       if (filter === 'pending') return !isDone;
