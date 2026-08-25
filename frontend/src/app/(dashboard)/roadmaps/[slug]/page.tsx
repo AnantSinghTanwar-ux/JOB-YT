@@ -136,8 +136,8 @@ function RoadmapGraphInner() {
     const rfNodes: Node[] = data.nodes.map((n) => {
       const normTitle = n.title.toLowerCase().replace(/[-_ ]/g, '');
       const isJunk = JUNK_TYPES.has(n.type) || normTitle === 'horizontalnode' || normTitle === 'verticalnode';
-      const screenX = n.position_x;
-      const screenY = n.position_y;
+      const screenX = n.position_x || 0;
+      const screenY = n.position_y || 0;
 
       const isCompleted = completedSet.has(n.id);
       const isRecommended = recommendedSet.has(n.id);
@@ -259,7 +259,7 @@ function RoadmapGraphInner() {
   if (!data) return null;
 
   return (
-    <div className="flex min-h-[calc(100vh-140px)] w-full overflow-hidden bg-slate-50 border border-slate-200/50 rounded-3xl shadow-sm">
+    <div className="flex h-[calc(100vh-140px)] w-full overflow-hidden bg-slate-50 border border-slate-200/50 rounded-3xl shadow-sm">
       {/* ── Left Pane: Learning Progress & Recommended Skill (scrollable dark slates) ── */}
       <div className="w-[380px] shrink-0 bg-[#141414] text-white border-r border-white/10 p-6 flex flex-col h-full overflow-y-auto scrollbar-thin">
         {/* Navigation back */}
