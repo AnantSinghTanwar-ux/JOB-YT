@@ -91,6 +91,8 @@ export const Judge0Service = {
           compile_output: pistonData.compile?.stderr ? Buffer.from(pistonData.compile.stderr).toString('base64') : null,
           time: String(0.1), // Piston doesn't return exact time in standard format
           memory: 1024,
+          message: null,
+          token: 'piston-fallback-token',
         };
       } catch (fallbackErr: unknown) {
         console.error('[Judge0Service] Piston fallback also failed:', fallbackErr);
