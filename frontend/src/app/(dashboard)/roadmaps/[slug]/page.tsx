@@ -11,6 +11,7 @@ import {
   Position,
   ReactFlowProvider,
   useReactFlow,
+  Handle,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import {
@@ -34,6 +35,21 @@ import {
 import Link from 'next/link';
 import { ROUTES } from '@/constants';
 import { useAuthStore } from '@/store/auth.store';
+
+const CustomNode = ({ data }: { data: any }) => {
+  return (
+    <div style={{ opacity: data.isJunk ? 0 : 1, pointerEvents: data.isJunk ? 'none' : 'auto' }}>
+      <Handle type="target" position={Position.Top} className="!bg-slate-400 !w-1.5 !h-1.5 !border-0" />
+      {!data.isJunk && <div style={data.style}>{data.label}</div>}
+      {data.isJunk && <div style={{ width: 1, height: 1 }} />}
+      <Handle type="source" position={Position.Bottom} className="!bg-slate-400 !w-1.5 !h-1.5 !border-0" />
+    </div>
+  );
+};
+
+const nodeTypes = {
+  custom: CustomNode,
+};
 
 function RoadmapGraphInner() {
   const params = useParams();
@@ -162,37 +178,28 @@ function RoadmapGraphInner() {
       return {
         id: String(n.id),
         position: { x: screenX, y: screenY },
-        data: { label: isJunk ? '' : (isCompleted ? `✓ ${n.title}` : n.title) },
-        type: n.type === 'root' ? 'input' : 'default',
-        sourcePosition: Position.Bottom,
-        targetPosition: Position.Top,
-        style: isJunk
-          ? {
-              opacity: 0,
-              pointerEvents: 'none',
-              width: 1,
-              height: 1,
-              padding: 0,
-              border: 'none',
-              background: 'transparent'
-            }
-          : {
-              background,
-              color,
-              border,
-              borderRadius: '8px',
-              fontWeight: '600',
-              fontSize: '12px',
-              padding: '14px 12px',
-              width: NODE_WIDTH,
-              textAlign: 'center',
-              boxShadow,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              lineHeight: '1.4',
-              letterSpacing: '0.02em',
-            },
+        data: { 
+          label: isJunk ? '' : (isCompleted ? `✓ ${n.title}` : n.title),
+          isJunk,
+          style: {
+            background,
+            color,
+            border,
+            borderRadius: '8px',
+            fontWeight: '600',
+            fontSize: '12px',
+            padding: '14px 12px',
+            width: NODE_WIDTH,
+            textAlign: 'center',
+            boxShadow,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            lineHeight: '1.4',
+            letterSpacing: '0.02em',
+          }
+        },
+        type: 'custom',
       };
     });
 
@@ -478,6 +485,7 @@ function RoadmapGraphInner() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          nodeTypes={nodeTypes}
           colorMode="dark"
           fitView
           fitViewOptions={{ padding: 0.2 }}
