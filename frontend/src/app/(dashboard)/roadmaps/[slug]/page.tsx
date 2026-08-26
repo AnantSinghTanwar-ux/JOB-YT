@@ -14,6 +14,7 @@ import {
   Handle,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import dagre from 'dagre';
 import {
   RoadmapApi,
   RoadmapFullData,
@@ -220,7 +221,33 @@ function RoadmapGraphInner() {
       };
     });
 
-    return { nodes: rfNodes, edges: rfEdges };
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+
+    dagreGraph.setGraph({ rankdir: 'TB', nodesep: 50, ranksep: 80 });
+
+    rfNodes.forEach((node) => {
+      dagreGraph.setNode(node.id, { width: 220, height: node.data.isJunk ? 1 : 60 });
+    });
+
+    rfEdges.forEach((edge) => {
+      dagreGraph.setEdge(edge.source, edge.target);
+    });
+
+    dagre.layout(dagreGraph);
+
+    const layoutedNodes = rfNodes.map((node) => {
+      const nodeWithPosition = dagreGraph.node(node.id);
+      return {
+        ...node,
+        position: {
+          x: nodeWithPosition.x - 220 / 2,
+          y: nodeWithPosition.y - (node.data.isJunk ? 1 : 60) / 2,
+        },
+      };
+    });
+
+    return { nodes: layoutedNodes, edges: rfEdges };
   }, [data, progress, recommendation]);
 
   // Center/focus on a specific node in React Flow graph
