@@ -60,44 +60,40 @@ export const Judge0Service = {
       return data;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      console.warn('[Judge0Service] Judge0 execution failed, attempting fallback to Piston API:', message);
       
-      try {
-        // Fallback to Piston API (Free, no auth required)
-        const pistonLangMap: Record<string, { lang: string; version: string }> = {
-          python: { lang: 'python', version: '3.10.0' },
-          javascript: { lang: 'javascript', version: '18.15.0' },
-          java: { lang: 'java', version: '15.0.2' },
-          cpp: { lang: 'cpp', version: '10.2.0' },
-        };
-        const pistonInfo = pistonLangMap[options.language];
-        if (!pistonInfo) throw new Error('Language not supported by fallback runner');
+      // If we are trying to hit localhost and it fails, fallback to public judge0 CE
+      if (JUDGE0_API_URL.includes('localhost') || JUDGE0_API_URL.includes('127.0.0.1')) {
+        console.warn('[Judge0Service] Local Judge0 execution failed, attempting fallback to public ce.judge0.com API:', message);
+        
+        try {
+          const fallbackUrl = `https://ce.judge0.com/submissions${wait ? '?wait=true' : ''}`;
+          const { data: fallbackData } = await axios.post<Judge0SubmissionResult>(fallbackUrl, payload, {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 30000,
+          });
 
-        const { data: pistonData } = await axios.post('https://emkc.org/api/v2/piston/execute', {
-          language: pistonInfo.lang,
-          version: pistonInfo.version,
-          files: [{ content: options.sourceCode }],
-          stdin: options.stdin ?? '',
-        });
+          if (!wait && fallbackData.token) {
+            // Poll the public API instead
+            for (let i = 0; i < 30; i++) {
+              const { data: pollData } = await axios.get<Judge0SubmissionResult>(
+                `https://ce.judge0.com/submissions/${fallbackData.token}`,
+                { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
+              );
+              if (pollData.status && pollData.status.id >= 3) return pollData;
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            throw new Error('Public Judge0 polling timed out');
+          }
 
-        // Translate Piston response to Judge0 format to prevent breaking frontend types
-        return {
-          status: {
-            id: pistonData.run.code === 0 ? JUDGE0_STATUS_ACCEPTED : (pistonData.compile?.code !== 0 && pistonData.compile?.stderr ? 6 : 11),
-            description: pistonData.run.code === 0 ? 'Accepted' : (pistonData.compile?.code !== 0 && pistonData.compile?.stderr ? 'Compilation Error' : 'Runtime Error'),
-          },
-          stdout: pistonData.run.stdout ? Buffer.from(pistonData.run.stdout).toString('base64') : null,
-          stderr: pistonData.run.stderr ? Buffer.from(pistonData.run.stderr).toString('base64') : (pistonData.compile?.stderr ? Buffer.from(pistonData.compile.stderr).toString('base64') : null),
-          compile_output: pistonData.compile?.stderr ? Buffer.from(pistonData.compile.stderr).toString('base64') : null,
-          time: String(0.1), // Piston doesn't return exact time in standard format
-          memory: 1024,
-          message: null,
-          token: 'piston-fallback-token',
-        };
-      } catch (fallbackErr: unknown) {
-        console.error('[Judge0Service] Piston fallback also failed:', fallbackErr);
-        throw new AppError(`Code execution service unavailable: ${message}`, 503);
+          return fallbackData;
+        } catch (fallbackErr: unknown) {
+          console.error('[Judge0Service] Public Judge0 fallback also failed:', fallbackErr);
+          throw new AppError(`Code execution service unavailable: ${message}`, 503);
+        }
       }
+      
+      console.error('[Judge0Service] Execution failed:', message);
+      throw new AppError(`Code execution service unavailable: ${message}`, 503);
     }
   },
 
