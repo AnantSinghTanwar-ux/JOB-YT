@@ -171,19 +171,30 @@ export const CodingSubmissionService = {
       job_snapshot: jobSnapshot || undefined,
     });
 
-    // Enqueue with retry: 3 attempts, exponential back-off starting at 5s
     const evalQueue = getCodingEvaluationQueue();
     if (evalQueue) {
-      await evalQueue.add(
-        'evaluateSubmission',
-        { submissionId: submission.id, passingScore },
-        {
-          attempts: 3,
-          backoff: { type: 'exponential', delay: 5000 },
-        },
-      );
+      try {
+        await evalQueue.add(
+          'evaluateSubmission',
+          { submissionId: submission.id, passingScore },
+          {
+            attempts: 3,
+            backoff: { type: 'exponential', delay: 5000 },
+          },
+        );
+      } catch (queueErr) {
+        console.warn('[CodingSubmission] Failed to enqueue submission evaluation, executing synchronously as fallback:', queueErr);
+        // Fire and forget fallback
+        CodingSubmissionService.evaluateSubmission(submission.id, passingScore).catch(err => {
+          console.error('[CodingSubmission] Synchronous evaluation fallback failed:', err);
+        });
+      }
     } else {
-      console.warn('[CodingSubmission] Redis unavailable — submission evaluation skipped');
+      console.warn('[CodingSubmission] Redis unavailable — executing submission evaluation synchronously as fallback');
+      // Fire and forget fallback
+      CodingSubmissionService.evaluateSubmission(submission.id, passingScore).catch(err => {
+        console.error('[CodingSubmission] Synchronous evaluation fallback failed:', err);
+      });
     }
 
     if (req.practiceSessionId) {
