@@ -60,8 +60,42 @@ export const Judge0Service = {
       return data;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      console.error('[Judge0Service] Execution failed:', message);
-      throw new AppError(`Code execution service unavailable: ${message}`, 503);
+      console.warn('[Judge0Service] Judge0 execution failed, attempting fallback to Piston API:', message);
+      
+      try {
+        // Fallback to Piston API (Free, no auth required)
+        const pistonLangMap: Record<string, { lang: string; version: string }> = {
+          python: { lang: 'python', version: '3.10.0' },
+          javascript: { lang: 'javascript', version: '18.15.0' },
+          java: { lang: 'java', version: '15.0.2' },
+          cpp: { lang: 'cpp', version: '10.2.0' },
+        };
+        const pistonInfo = pistonLangMap[options.language];
+        if (!pistonInfo) throw new Error('Language not supported by fallback runner');
+
+        const { data: pistonData } = await axios.post('https://emkc.org/api/v2/piston/execute', {
+          language: pistonInfo.lang,
+          version: pistonInfo.version,
+          files: [{ content: options.sourceCode }],
+          stdin: options.stdin ?? '',
+        });
+
+        // Translate Piston response to Judge0 format to prevent breaking frontend types
+        return {
+          status: {
+            id: pistonData.run.code === 0 ? JUDGE0_STATUS_ACCEPTED : (pistonData.compile?.code !== 0 && pistonData.compile?.stderr ? 6 : 11),
+            description: pistonData.run.code === 0 ? 'Accepted' : (pistonData.compile?.code !== 0 && pistonData.compile?.stderr ? 'Compilation Error' : 'Runtime Error'),
+          },
+          stdout: pistonData.run.stdout ? Buffer.from(pistonData.run.stdout).toString('base64') : null,
+          stderr: pistonData.run.stderr ? Buffer.from(pistonData.run.stderr).toString('base64') : (pistonData.compile?.stderr ? Buffer.from(pistonData.compile.stderr).toString('base64') : null),
+          compile_output: pistonData.compile?.stderr ? Buffer.from(pistonData.compile.stderr).toString('base64') : null,
+          time: String(0.1), // Piston doesn't return exact time in standard format
+          memory: 1024,
+        };
+      } catch (fallbackErr: unknown) {
+        console.error('[Judge0Service] Piston fallback also failed:', fallbackErr);
+        throw new AppError(`Code execution service unavailable: ${message}`, 503);
+      }
     }
   },
 
