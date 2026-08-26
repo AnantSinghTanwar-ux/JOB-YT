@@ -160,7 +160,7 @@ function RoadmapGraphInner() {
       }
 
       return {
-        id: n.id,
+        id: String(n.id),
         position: { x: screenX, y: screenY },
         data: { label: isJunk ? '' : (isCompleted ? `✓ ${n.title}` : n.title) },
         type: n.type === 'root' ? 'input' : 'default',
@@ -201,13 +201,13 @@ function RoadmapGraphInner() {
       const isSourceCompleted = completedSet.has(e.source_node_id);
       
       return {
-        id: e.id,
-        source: e.source_node_id,
-        target: e.target_node_id,
+        id: String(e.id),
+        source: String(e.source_node_id),
+        target: String(e.target_node_id),
         type: 'smoothstep',
         animated: isSourceCompleted && !isCompleted,
         style: {
-          stroke: isCompleted ? '#10b981' : '#334155',
+          stroke: isCompleted ? '#10b981' : '#64748b',
           strokeWidth: isCompleted ? 3 : 2,
         },
       };
@@ -478,6 +478,7 @@ function RoadmapGraphInner() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          colorMode="dark"
           fitView
           fitViewOptions={{ padding: 0.2 }}
           minZoom={0.15}
