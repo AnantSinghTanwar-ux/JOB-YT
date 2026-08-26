@@ -125,7 +125,7 @@ function RoadmapGraphInner() {
 
     const JUNK_TYPES = new Set(['horizontal', 'vertical', 'label', 'paragraph', 'legend', 'straight', 'step', 'simplebezier', 'button', 'linksgroup']);
 
-    const NODE_WIDTH = 180;
+    const NODE_WIDTH = 220;
     const NODE_HEIGHT = 50;
 
     const completedSet = new Set(progress?.completedNodes.map((n) => n.id) || []);
@@ -136,24 +136,27 @@ function RoadmapGraphInner() {
     const rfNodes: Node[] = data.nodes.map((n) => {
       const normTitle = n.title.toLowerCase().replace(/[-_ ]/g, '');
       const isJunk = JUNK_TYPES.has(n.type) || normTitle === 'horizontalnode' || normTitle === 'verticalnode';
-      const screenX = n.position_x || 0;
-      const screenY = n.position_y || 0;
+      const screenX = (n.position_x || 0) * 1.5;
+      const screenY = (n.position_y || 0) * 1.8;
 
       const isCompleted = completedSet.has(n.id);
       const isRecommended = recommendedSet.has(n.id);
 
-      let background = n.type === 'root' ? '#0f172a' : n.type === 'category' ? '#f1f5f9' : 'white';
-      let color = n.type === 'root' ? 'white' : '#0f172a';
-      let border = '1px solid #cbd5e1';
+      let background = '#141414';
+      let color = '#f8fafc';
+      let border = '1px solid #334155';
+      let boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.5)';
 
       if (isCompleted) {
-        background = '#dcfce7'; // green-100
-        border = '2px solid #22c55e'; // green-500
-        color = '#15803d'; // green-700
+        background = '#064e3b'; // dark green
+        border = '1px solid #10b981'; // emerald 500
+        color = '#a7f3d0'; // emerald 200
+        boxShadow = '0 0 15px -3px rgba(16, 185, 129, 0.3)';
       } else if (isRecommended) {
-        background = '#fffbeb'; // amber-50
-        border = '2px dashed #f59e0b'; // amber-500
-        color = '#b45309'; // amber-700
+        background = '#451a03'; // dark amber
+        border = '2px dashed #f59e0b'; // amber 500
+        color = '#fde68a'; // amber 200
+        boxShadow = '0 0 20px 0px rgba(245, 158, 11, 0.4)';
       }
 
       return {
@@ -177,33 +180,38 @@ function RoadmapGraphInner() {
               background,
               color,
               border,
-              borderRadius: '12px',
-              fontWeight: '700',
-              fontSize: '11px',
-              padding: '12px 10px',
+              borderRadius: '8px',
+              fontWeight: '600',
+              fontSize: '12px',
+              padding: '14px 12px',
               width: NODE_WIDTH,
               textAlign: 'center',
-              boxShadow: isRecommended
-                ? '0 0 18px 0px rgba(245, 158, 11, 0.45)'
-                : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+              boxShadow,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: '1.4',
+              letterSpacing: '0.02em',
             },
       };
     });
 
-    const rfEdges: Edge[] = data.edges.map((e) => ({
-      id: e.id,
-      source: e.source_node_id,
-      target: e.target_node_id,
-      type: 'smoothstep',
-      animated: !completedSet.has(e.source_node_id) && !completedSet.has(e.target_node_id),
-      style: {
-        stroke:
-          completedSet.has(e.source_node_id) && completedSet.has(e.target_node_id)
-            ? '#22c55e'
-            : '#94a3b8',
-        strokeWidth: 2,
-      },
-    }));
+    const rfEdges: Edge[] = data.edges.map((e) => {
+      const isCompleted = completedSet.has(e.source_node_id) && completedSet.has(e.target_node_id);
+      const isSourceCompleted = completedSet.has(e.source_node_id);
+      
+      return {
+        id: e.id,
+        source: e.source_node_id,
+        target: e.target_node_id,
+        type: 'smoothstep',
+        animated: isSourceCompleted && !isCompleted,
+        style: {
+          stroke: isCompleted ? '#10b981' : '#334155',
+          strokeWidth: isCompleted ? 3 : 2,
+        },
+      };
+    });
 
     return { nodes: rfNodes, edges: rfEdges };
   }, [data, progress, recommendation]);
@@ -250,7 +258,7 @@ function RoadmapGraphInner() {
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center p-8 bg-slate-50 min-h-[50vh]">
+      <div className="flex h-full items-center justify-center p-8 bg-[#0A0A0A] min-h-[50vh] rounded-3xl">
         <FaSpinner className="text-[#C3FF3D] animate-spin text-5xl mb-4" />
       </div>
     );
@@ -259,7 +267,7 @@ function RoadmapGraphInner() {
   if (!data) return null;
 
   return (
-    <div className="flex h-[calc(100vh-140px)] w-full overflow-hidden bg-slate-50 border border-slate-200/50 rounded-3xl shadow-sm">
+    <div className="flex h-[calc(100vh-140px)] w-full overflow-hidden bg-[#0A0A0A] border border-white/10 rounded-3xl shadow-2xl">
       {/* ── Left Pane: Learning Progress & Recommended Skill (scrollable dark slates) ── */}
       <div className="w-[380px] shrink-0 bg-[#141414] text-white border-r border-white/10 p-6 flex flex-col h-full overflow-y-auto scrollbar-thin">
         {/* Navigation back */}
@@ -476,8 +484,8 @@ function RoadmapGraphInner() {
           maxZoom={1.5}
           attributionPosition="bottom-right"
         >
-          <Background color="#cbd5e1" gap={16} />
-          <Controls className="bg-white rounded-xl shadow-sm border border-slate-200 fill-slate-600" />
+          <Background color="#334155" gap={24} size={2} />
+          <Controls className="!bg-[#1e293b] !border-[#334155] !fill-slate-300 shadow-lg" />
         </ReactFlow>
       </div>
     </div>
